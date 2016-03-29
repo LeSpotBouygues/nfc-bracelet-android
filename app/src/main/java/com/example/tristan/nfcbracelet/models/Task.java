@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 /**
  * Created by Tristan on 18/03/2016.
  */
-public class Task extends RealmObject {
+public class Task {
     private String mId;
     private String mName;
 

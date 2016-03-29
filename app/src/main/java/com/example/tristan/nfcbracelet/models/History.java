@@ -6,10 +6,8 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Tristan on 24/03/2016.
  */
-public class History extends RealmObject {
-    @PrimaryKey
+public class History {
     private String id;
-
     private String duration;
     private Companion companion;
     private Task task;

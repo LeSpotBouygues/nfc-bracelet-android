@@ -2,6 +2,8 @@ package com.example.tristan.nfcbracelet.models;
 
 import com.example.tristan.nfcbracelet.utils.RealmString;
 
+import java.util.ArrayList;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -9,11 +11,10 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Tristan on 18/03/2016.
  */
-public class Companion extends RealmObject {
+public class Companion {
 
-    @PrimaryKey
-    private String _id;
-
+    private int id;
+    private String userId;
     private String firstName;
     private String lastName;
     private String aliasName;
@@ -22,7 +23,7 @@ public class Companion extends RealmObject {
     private boolean chief;
     private String braceletId;
 
-    private RealmList<Task> tasksInProgress;
+    private ArrayList<Task> tasksInProgress;
 
     public Companion() {
 
@@ -36,11 +37,11 @@ public class Companion extends RealmObject {
         this.braceletId = braceletId;
     }
 
-    public RealmList<Task> getTasksInProgress() {
+    public ArrayList<Task> getTasksInProgress() {
         return tasksInProgress;
     }
 
-    public void setTasksInProgress(RealmList<Task> tasksInProgress) {
+    public void setTasksInProgress(ArrayList<Task> tasksInProgress) {
         this.tasksInProgress = tasksInProgress;
     }
 
@@ -52,13 +53,20 @@ public class Companion extends RealmObject {
         this.position = position;
     }
 
-    public String get_id() {
-
-        return _id;
+    public int getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {

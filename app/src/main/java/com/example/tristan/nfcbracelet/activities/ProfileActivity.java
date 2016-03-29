@@ -61,12 +61,12 @@ public class ProfileActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        Realm realm = Realm.getDefaultInstance();
+        /*Realm realm = Realm.getDefaultInstance();
         RealmResults<Companion> results = realm.where(Companion.class)
                 .findAll();
         for (Companion companion : results) {
             Log.d("PROFILE", companion.getFirstName());
-        }
+        }*/
 
     }
 

@@ -20,7 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
+import com.example.tristan.nfcbracelet.database.CompanionDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
+import com.example.tristan.nfcbracelet.http.HttpApi;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Team;
 import com.example.tristan.nfcbracelet.utils.RealmString;
@@ -64,20 +66,14 @@ public class MainActivity extends Activity {
 
     private TextView mTextView;
     private NfcAdapter mNfcAdapter;
+    private HttpApi httpApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // To delete once data model is finished
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-
-        //RealmConfiguration config = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(config);
+        httpApi = HttpApi.getInstance();
 
         mTextView = (TextView) findViewById(R.id.textView_explanation);
 
@@ -96,15 +92,6 @@ public class MainActivity extends Activity {
         } else {
             //mTextView.setText(R.string.explanation);
         }
-
-        /*final Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                goToNavigation();
-            }
-        });*/
-
-
 
         handleIntent(getIntent());
         getDataFromServer();
@@ -219,12 +206,12 @@ public class MainActivity extends Activity {
     }
 
     void getDataFromServer() {
-        OkHttpClient client = new OkHttpClient();
 
+        // get all companions
         Request requestCompanions = new Request.Builder()
-                .url("http://54.86.80.245:3000/companions")
+                .url(httpApi.API_ADDRESS + httpApi.COMPANIONS_ROUTE)
                 .build();
-        client.newCall(requestCompanions).enqueue(new Callback() {
+        httpApi.getClient().newCall(requestCompanions).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -238,15 +225,15 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET COMPANIONS", responseString);
                     fillCompanionsInDB(responseString);
-
                 }
             }
         });
 
-        Request requestTeams = new Request.Builder()
+        // get all teams
+        /*Request requestTeams = new Request.Builder()
                 .url("http://54.86.80.245:3000/teams")
                 .build();
-        client.newCall(requestTeams).enqueue(new Callback() {
+        httpApi.getClient().newCall(requestTeams).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -263,28 +250,34 @@ public class MainActivity extends Activity {
 
                 }
             }
-        });
+        });*/
     }
 
     void fillCompanionsInDB(String response) {
         try {
             JSONArray jsonResponse = new JSONArray(response);
-
-            Realm realm = Realm.getDefaultInstance();
+            CompanionDB companionDB = new CompanionDB(this);
 
             for (int i=0; i < jsonResponse.length(); i++) {
                 JSONObject jsonObject = jsonResponse.getJSONObject(i);
                 Companion companion = new Companion();
-                companion.set_id(jsonObject.getString("_id"));
+                companion.setUserId(jsonObject.getString("_id"));
                 companion.setFirstName(jsonObject.getString("firstName"));
                 companion.setLastName(jsonObject.getString("lastName"));
-                companion.setAliasName(jsonObject.getString("aliasName"));
-                companion.setChief(jsonObject.getBoolean("chief"));
-                /*if (jsonObject.getString("position") != null)
-                    companion.setPosition(jsonObject.getString("position"));*/
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(companion);
-                realm.commitTransaction();
+                if (jsonObject.has("position"))
+                    companion.setPosition(jsonObject.getString("position"));
+                else
+                    companion.setPosition("");
+                if (jsonObject.has("bracelet_id"))
+                    companion.setBraceletId(jsonObject.getString("bracelet_id"));
+                else
+                    companion.setBraceletId("");
+                //companion.setAliasName(jsonObject.getString("aliasName"));
+                //companion.setChief(jsonObject.getBoolean("chief"));
+
+                companionDB.open();
+                companionDB.insertCompanion(companion);
+                companionDB.close();
             }
 
         } catch (JSONException e) {

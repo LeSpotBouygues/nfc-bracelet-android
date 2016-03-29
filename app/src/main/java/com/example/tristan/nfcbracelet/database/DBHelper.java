@@ -7,6 +7,8 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.tristan.nfcbracelet.models.Companion;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,91 +16,39 @@ import java.util.HashMap;
  * Created by Tristan on 14/03/2016.
  */
 public class DBHelper extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "COP78.db";
-    public static final String COMPANIONS_TABLE_NAME = "companions";
-    public static final String COMPANIONS_COLUMN_ID = "id";
-    public static final String COMPANIONS_COLUMN_NAME = "name";
-    public static final String COMPANIONS_COLUMN_JOB = "job";
-    public static final String COMPANIONS_COLUMN_STATUS = "status";
+    public static final String DB_NAME = "COP78.db";
+    private static final String TABLE_COMPANIONS = "companions_table";
+    private static final String COMPANIONS_COL_ID = "id";
+    private static final String COMPANIONS_COL_USER_ID = "user_id";
+    private static final String COMPANIONS_COL_FIRSTNAME = "firstname";
+    private static final String COMPANIONS_COL_LASTNAME = "lastname";
+    private static final String COMPANIONS_COL_POSITION = "position";
+    private static final String COMPANIONS_COL_BRACELET_ID = "bracelet_id";
+    private static final String COMPANIONS_COL_CHIEF = "chief";
 
-    private HashMap hp;
+    private static final String CREATE_DB = "CREATE TABLE " + TABLE_COMPANIONS + " ("
+            + COMPANIONS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COMPANIONS_COL_USER_ID + " TEXT NOT NULL, "
+            + COMPANIONS_COL_FIRSTNAME + " TEXT NOT NULL, "
+            + COMPANIONS_COL_LASTNAME + " TEXT NOT NULL, "
+            + COMPANIONS_COL_POSITION + " TEXT NOT NULL, "
+            + COMPANIONS_COL_BRACELET_ID + " TEXT NOT NULL);";
 
-    public DBHelper(Context context)
-    {
-        super(context, DATABASE_NAME , null, 1);
+    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // TODO Auto-generated method stub
-        db.execSQL(
-                "create table companions " +
-                        "(id integer primary key, name text, job text, status integer)"
-        );
+        //on crée la table à partir de la requête écrite dans la variable CREATE_BDD
+        db.execSQL(CREATE_DB);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
-        db.execSQL("DROP TABLE IF EXISTS companions");
+        //On peut faire ce qu'on veut ici moi j'ai décidé de supprimer la table et de la recréer
+        //comme ça lorsque je change la version les id repartent de 0
+        //db.execSQL("DROP TABLE " + TABLE_LIVRES + ";");
         onCreate(db);
-    }
-
-    public boolean insertContact  (String name, String job, int status)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("job", job);
-        contentValues.put("status", status);
-        db.insert("companions", null, contentValues);
-        return true;
-    }
-
-    public Cursor getData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from companions where id="+id+"", null );
-        return res;
-    }
-
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, COMPANIONS_TABLE_NAME);
-        return numRows;
-    }
-
-    public boolean updateCompanion (Integer id, String name, String job, int status)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("job", job);
-        contentValues.put("status", status);
-        db.update("companions", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
-        return true;
-    }
-
-    public Integer deleteCompanion (Integer id)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("companions",
-                "id = ? ",
-                new String[] { Integer.toString(id) });
-    }
-
-    public ArrayList<String> getAllCompanions()
-    {
-        ArrayList<String> array_list = new ArrayList<String>();
-
-        //hp = new HashMap();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from companions", null );
-        res.moveToFirst();
-
-        while(!res.isAfterLast()){
-            array_list.add(res.getString(res.getColumnIndex(COMPANIONS_COLUMN_NAME)));
-            res.moveToNext();
-        }
-        return array_list;
     }
 }

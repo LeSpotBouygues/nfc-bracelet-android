@@ -27,12 +27,16 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
+import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.DBHelper;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.fragments.SynchronizeDataFragment;
 import com.example.tristan.nfcbracelet.fragments.TasksFragment;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Team;
 import com.example.tristan.nfcbracelet.utils.RealmString;
+
+import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -54,7 +58,6 @@ public class HomeActivity extends AppCompatActivity
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -68,20 +71,21 @@ public class HomeActivity extends AppCompatActivity
                 .replace(R.id.frame_container, new CompanionsFragment())
                 .commit();
 
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Companion> results = realm.where(Companion.class)
-                .findAll();
+        CompanionDB companionDB = new CompanionDB(this);
+        companionDB.open();
+        ArrayList<Companion> results = companionDB.getAllCompanions();
+        companionDB.close();
         for (Companion companion : results) {
             Log.d("DB RESULTS", companion.getFirstName());
         }
-        RealmResults<Team> teams = realm.where(Team.class)
+        /*RealmResults<Team> teams = realm.where(Team.class)
                 .findAll();
         for (Team team : teams) {
             Log.d("DB RESULTS", team.getChiefId());
             for (RealmString id : team.getCompanions()) {
                 Log.d("DB RESULTS", "companion_id = " + id.getStringValue());
             }
-        }
+        }*/
     }
 
     @Override
