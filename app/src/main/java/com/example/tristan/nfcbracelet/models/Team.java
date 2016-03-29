@@ -11,24 +11,31 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Tristan on 18/03/2016.
  */
-public class Team extends RealmObject {
-    @PrimaryKey
-    private String id;
+public class Team {
+    private int id;
+    private String teamId;
     private String chiefId;
-    private RealmList<RealmString> companions;
-    private RealmList<RealmString> tasks;
-    //private ArrayList<Companion> mCompanionsList;
+    private Companion chief;
+    private ArrayList<Companion> mCompanionsList;
 
     public Team() {
-
+        mCompanionsList = new ArrayList<>();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String id) {
+        teamId = id;
     }
 
     public String getChiefId() {
@@ -39,19 +46,23 @@ public class Team extends RealmObject {
         this.chiefId = chiefId;
     }
 
-    public RealmList<RealmString> getCompanions() {
-        return companions;
+    public void setChief(Companion companion) {
+        chief = companion;
     }
 
-    public void setCompanions(RealmList<RealmString> companions) {
-        this.companions = companions;
+    public Companion getChief() {
+        return chief;
     }
 
-    public RealmList<RealmString> getTasks() {
-        return tasks;
+    public void addCompanion(Companion companion) {
+        mCompanionsList.add(companion);
     }
 
-    public void setTasks(RealmList<RealmString> tasks) {
-        this.tasks = tasks;
+    public Companion getCompanionByIndex(int id) {
+        return mCompanionsList.get(id);
+    }
+
+    public int getSize() {
+        return mCompanionsList.size();
     }
 }

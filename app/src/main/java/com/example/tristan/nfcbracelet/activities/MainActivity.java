@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.TeamDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.http.HttpApi;
 import com.example.tristan.nfcbracelet.models.Companion;
@@ -208,7 +209,7 @@ public class MainActivity extends Activity {
     void getDataFromServer() {
 
         // get all companions
-        Request requestCompanions = new Request.Builder()
+        /*Request requestCompanions = new Request.Builder()
                 .url(httpApi.API_ADDRESS + httpApi.COMPANIONS_ROUTE)
                 .build();
         httpApi.getClient().newCall(requestCompanions).enqueue(new Callback() {
@@ -227,11 +228,11 @@ public class MainActivity extends Activity {
                     fillCompanionsInDB(responseString);
                 }
             }
-        });
+        });*/
 
         // get all teams
-        /*Request requestTeams = new Request.Builder()
-                .url("http://54.86.80.245:3000/teams")
+        Request requestTeams = new Request.Builder()
+                .url(httpApi.API_ADDRESS + httpApi.TEAMS_ROUTE)
                 .build();
         httpApi.getClient().newCall(requestTeams).enqueue(new Callback() {
             @Override
@@ -247,10 +248,9 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET TEAMS", responseString);
                     fillTeamsInDB(responseString);
-
                 }
             }
-        });*/
+        });
     }
 
     void fillCompanionsInDB(String response) {
@@ -290,21 +290,23 @@ public class MainActivity extends Activity {
         try {
             JSONArray jsonResponse = new JSONArray(response);
 
-            Realm realm = Realm.getDefaultInstance();
+            TeamDB teamDB = new TeamDB(this);
+            CompanionDB  companionDB = new CompanionDB(this);
 
             for (int i=0; i < jsonResponse.length(); i++) {
                 JSONObject jsonObject = jsonResponse.getJSONObject(i);
                 Team team = new Team();
-                team.setId(jsonObject.getString("_id"));
+                team.setTeamId(jsonObject.getString("_id"));
                 team.setChiefId(jsonObject.getJSONObject("chief").getString("_id"));
                 JSONArray companions = jsonObject.getJSONArray("companions");
-                team.setCompanions(new RealmList<RealmString>());
                 for (int j=0; j < companions.length(); j++) {
-                   team.getCompanions().add(new RealmString(companions.getJSONObject(j).getString("_id")));
+                    companionDB.open();
+                    team.addCompanion(companionDB.getCompanionByUserId(companions.getJSONObject(j).getString("_id")));
+                    companionDB.close();
                 }
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(team);
-                realm.commitTransaction();
+                teamDB.open();
+                teamDB.insertTeam(team);
+                teamDB.close();
             }
 
         } catch (JSONException e) {

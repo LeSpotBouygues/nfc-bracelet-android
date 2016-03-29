@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.tristan.nfcbracelet.models.Companion;
 
@@ -88,6 +89,11 @@ public class CompanionDB {
     public Companion getCompanionByBraceletId(String braceletId){
         //Récupère dans un Cursor les valeurs correspondant à un livre contenu dans la BDD (ici on sélectionne le livre grâce à son titre)
         Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID}, COL_BRACELET_ID + " LIKE \"" + braceletId +"\"", null, null, null, null);
+        return cursorToCompanion(c);
+    }
+
+    public Companion getCompanionByUserId(String userId) {
+        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID}, COL_USER_ID + " LIKE \"" + userId +"\"", null, null, null, null);
         return cursorToCompanion(c);
     }
 
