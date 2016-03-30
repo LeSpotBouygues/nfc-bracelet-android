@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
 import com.example.tristan.nfcbracelet.database.DBHelper;
+import com.example.tristan.nfcbracelet.database.TeamDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.fragments.SynchronizeDataFragment;
 import com.example.tristan.nfcbracelet.fragments.TasksFragment;
@@ -71,6 +72,7 @@ public class HomeActivity extends AppCompatActivity
                 .replace(R.id.frame_container, new CompanionsFragment())
                 .commit();
 
+        Log.d("DB RESULTS", "=== COMPANIONS ===");
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
         ArrayList<Companion> results = companionDB.getAllCompanions();
@@ -78,14 +80,19 @@ public class HomeActivity extends AppCompatActivity
         for (Companion companion : results) {
             Log.d("DB RESULTS", companion.getFirstName());
         }
-        /*RealmResults<Team> teams = realm.where(Team.class)
-                .findAll();
-        for (Team team : teams) {
-            Log.d("DB RESULTS", team.getChiefId());
-            for (RealmString id : team.getCompanions()) {
-                Log.d("DB RESULTS", "companion_id = " + id.getStringValue());
+        Log.d("DB RESULTS", "=== TEAMS ===");
+        TeamDB teamDB = new TeamDB(this);
+        teamDB.open();
+        teamDB.displayTeamsTable();
+        ArrayList<Team> allTeams = teamDB.getAllTeams();
+        teamDB.close();
+        for (Team team : allTeams) {
+            Log.d("DB RESULTS", "TEAM = " + team.getTeamId());
+            //Log.d("DB RESULTS", team.getChief().getFirstName());
+            for (Companion companion : team.getCompanions()) {
+                Log.d("DB RESULTS", "    " + companion.getFirstName());
             }
-        }*/
+        }
     }
 
     @Override

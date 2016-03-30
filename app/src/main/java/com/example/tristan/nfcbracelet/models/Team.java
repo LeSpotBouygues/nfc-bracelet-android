@@ -65,4 +65,8 @@ public class Team {
     public int getSize() {
         return mCompanionsList.size();
     }
+
+    public ArrayList<Companion> getCompanions() {
+        return mCompanionsList;
+    }
 }

@@ -359,7 +359,10 @@ public class MainActivity extends Activity {
                 //companion.setChief(jsonObject.getBoolean("chief"));
 
                 companionDB.open();
-                companionDB.insertCompanion(companion);
+                if (companionDB.getCompanionByUserId(companion.getUserId()) == null)
+                    companionDB.insertCompanion(companion);
+                else
+                    companionDB.updateCompanion(companion.getUserId(), companion);
                 companionDB.close();
             }
 
@@ -370,6 +373,7 @@ public class MainActivity extends Activity {
     }
 
     void fillTeamsInDB(String response) {
+        Log.d(TAG, "fillTeamsInDB");
         try {
             JSONArray jsonResponse = new JSONArray(response);
 
@@ -377,6 +381,7 @@ public class MainActivity extends Activity {
             CompanionDB  companionDB = new CompanionDB(this);
 
             for (int i=0; i < jsonResponse.length(); i++) {
+                Log.d(TAG, "Team "+ Integer.toString(i));
                 JSONObject jsonObject = jsonResponse.getJSONObject(i);
                 Team team = new Team();
                 team.setTeamId(jsonObject.getString("_id"));
@@ -384,11 +389,17 @@ public class MainActivity extends Activity {
                 JSONArray companions = jsonObject.getJSONArray("companions");
                 for (int j=0; j < companions.length(); j++) {
                     companionDB.open();
-                    team.addCompanion(companionDB.getCompanionByUserId(companions.getJSONObject(j).getString("_id")));
+                    Companion companion = companionDB.getCompanionByUserId(companions.getJSONObject(j).getString("_id"));
+                    team.addCompanion(companion);
+                    Log.d(TAG, "add companion "+ companion.getUserId());
                     companionDB.close();
                 }
+                Log.d(TAG, "team "+ team.getTeamId() + " precreated");
                 teamDB.open();
-                teamDB.insertTeam(team);
+                if (teamDB.getTeamByTeamId(team.getTeamId()) == null)
+                    teamDB.insertTeam(team);
+                else
+                    teamDB.updateTeam(team);
                 teamDB.close();
             }
 

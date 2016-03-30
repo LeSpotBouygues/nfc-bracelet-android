@@ -70,7 +70,7 @@ public class CompanionDB {
         return db.insert(TABLE_COMPANIONS, null, values);
     }
 
-    public int updateCompanion(int id, Companion companion){
+    public int updateCompanion(String userId, Companion companion){
         //La mise à jour d'un livre dans la BDD fonctionne plus ou moins comme une insertion
         //il faut simplement préciser quel livre on doit mettre à jour grâce à l'ID
         ContentValues values = new ContentValues();
@@ -78,7 +78,7 @@ public class CompanionDB {
         values.put(COL_LASTNAME, companion.getLastName());
         values.put(COL_POSITION, companion.getPosition());
         values.put(COL_BRACELET_ID, companion.getBraceletId());
-        return db.update(TABLE_COMPANIONS, values, COL_ID + " = " + id, null);
+        return db.update(TABLE_COMPANIONS, values, COL_USER_ID  + " LIKE \"" + userId +"\"", null);
     }
 
     public int deleteCompanionById(int id){

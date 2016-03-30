@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Team;
@@ -53,7 +54,9 @@ public class TeamDB {
 
     public void insertTeam(Team team){
 
-        for (int i=0; i < team.getSize(); i++) {
+        Log.d("TEAMDB", "insert team " + team.getTeamId());
+        int size = team.getSize();
+        for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
             ContentValues values = new ContentValues();
             //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
@@ -64,22 +67,62 @@ public class TeamDB {
         }
     }
 
+    public void updateTeam(Team team){
+
+        Log.d("TEAMDB", "update team " + team.getTeamId());
+        int size = team.getSize();
+        Log.d("TEAMDB", "size = " + Integer.toString(size));
+        for (int i=0; i < size; i++) {
+            //Création d'un ContentValues (fonctionne comme une HashMap)
+            ContentValues values = new ContentValues();
+            //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
+            values.put(COL_TEAM_ID, team.getTeamId());
+            values.put(COL_CHIEF_ID, team.getChiefId());
+            String companionId = team.getCompanionByIndex(i).getUserId();
+            values.put(COL_COMPANION_ID, companionId);
+            db.update(TABLE_TEAMS, values, COL_COMPANION_ID + " LIKE \"" + companionId + "\" AND " + COL_TEAM_ID + " LIKE \"" + team.getTeamId() + "\"", null);
+        }
+    }
+
     public Team getTeamByChiefId(String chiefId){
         //Récupère dans un Cursor les valeurs correspondant à un livre contenu dans la BDD (ici on sélectionne le livre grâce à son titre)
         Cursor c = db.query(TABLE_TEAMS, new String[] {COL_ID, COL_TEAM_ID, COL_CHIEF_ID, COL_COMPANION_ID}, COL_CHIEF_ID + " LIKE \"" + chiefId +"\"", null, null, null, null);
         return cursorToTeam(c);
     }
 
+    public Team getTeamByTeamId(String teamId){
+        //Récupère dans un Cursor les valeurs correspondant à un livre contenu dans la BDD (ici on sélectionne le livre grâce à son titre)
+        Cursor c = db.query(TABLE_TEAMS, new String[] {COL_ID, COL_TEAM_ID, COL_CHIEF_ID, COL_COMPANION_ID}, COL_TEAM_ID + " LIKE \"" + teamId +"\"", null, null, null, null);
+        return cursorToTeam(c);
+    }
+
+    public void displayTeamsTable() {
+        Log.d("TEAMDB", "display table");
+        Cursor c = db.query(TABLE_TEAMS, new String[] {COL_ID, COL_TEAM_ID, COL_CHIEF_ID, COL_COMPANION_ID}, null, null, null, null, null);
+        if (c.getCount() == 0)
+            return;
+        c.moveToFirst();
+        for (int i=0; i < c.getCount(); i++) {
+            Log.d("TEAMDB", "id="+c.getString(NUM_COL_ID) +", team_id="+c.getString(NUM_COL_TEAM_ID) +", chief_id="+c.getString(NUM_COL_CHIEF_ID) +", companion_id=" + c.getString(NUM_COL_COMPANION_ID));
+            c.moveToNext();
+        }
+    }
+
     public ArrayList<Team> getAllTeams() {
         ArrayList<Team> teams = new ArrayList<>();
 
-        Cursor c = db.query(TABLE_TEAMS, new String[] {COL_ID, COL_TEAM_ID, COL_CHIEF_ID, COL_COMPANION_ID}, null, null, null, null, null);
+        Cursor c = db.query(true, TABLE_TEAMS, new String[] {COL_TEAM_ID}, null, null, null, null, null, null);
         if (c.getCount() == 0)
             return null;
 
         c.moveToFirst();
-
-        //T0D0
+        Log.d("TEAMDB", "getAllTeams count = " + Integer.toString(c.getCount()));
+        for (int i=0; i < c.getCount(); i++) {
+            Team team = getTeamByTeamId(c.getString(0));
+            if (team != null)
+                teams.add(team);
+            c.moveToNext();
+        }
 
         return teams;
     }
