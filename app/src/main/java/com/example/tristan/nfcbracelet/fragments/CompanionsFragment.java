@@ -1,18 +1,25 @@
 package com.example.tristan.nfcbracelet.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.ListView;
 
 import com.example.tristan.nfcbracelet.R;
-import com.example.tristan.nfcbracelet.activities.Companion2Activity;
 import com.example.tristan.nfcbracelet.activities.CompanionActivity;
+import com.example.tristan.nfcbracelet.adapters.CompanionAdapter;
+import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.Data;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +30,10 @@ import com.example.tristan.nfcbracelet.activities.CompanionActivity;
  * create an instance of this fragment.
  */
 public class CompanionsFragment extends Fragment {
+    private static final String TAG = "CompanionsFragment";
+
+    private Data mData;
+
     public CompanionsFragment() {
         // Required empty public constructor
     }
@@ -31,7 +42,7 @@ public class CompanionsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        mData = Data.getInstance();
     }
 
     @Override
@@ -40,32 +51,22 @@ public class CompanionsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_companions,
                 container, false);
-        LinearLayout companion1 = (LinearLayout) rootView.findViewById(R.id.companion1);
-        final ImageView imageView1 = (ImageView) rootView.findViewById(R.id.imageView11);
-        companion1.setOnClickListener(new View.OnClickListener() {
+        final CompanionAdapter adapter = new CompanionAdapter(getContext(), mData.getTeam().getCompanions());
+        // Attach the adapter to a ListView
+        ListView listView = (ListView) rootView.findViewById(R.id.companionsList);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                //if (imageView1.getIm)
-                Intent intent = new Intent(getActivity(), CompanionActivity.class);
-                startActivity(intent);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Companion companion = adapter.getItem(position);
+                Log.d(TAG, "Click on " + companion.getFirstName());
+                CheckBox checkBox = (CheckBox) adapter.getView(position, view.findViewById(R.id.checkBox), parent);
+                if (checkBox.isChecked()) {
+                    Intent intent = new Intent(getActivity(), CompanionActivity.class);
+                    startActivity(intent);
+                }
             }
         });
-        /*LinearLayout companion2 = (LinearLayout) rootView.findViewById(R.id.companion2);
-        companion2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Companion2Activity.class);
-                startActivity(intent);
-            }
-        });
-        LinearLayout companion3 = (LinearLayout) rootView.findViewById(R.id.companion3);
-        companion3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Companion2Activity.class);
-                startActivity(intent);
-            }
-        });*/
 
         return rootView;
     }

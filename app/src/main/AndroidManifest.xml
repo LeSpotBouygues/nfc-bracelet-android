@@ -30,14 +30,6 @@
             android:label="@string/title_activity_companion"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.Companion2Activity"
-            android:label="@string/title_activity_companion"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.Companion3Activity"
-            android:label="@string/title_activity_companion"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar">

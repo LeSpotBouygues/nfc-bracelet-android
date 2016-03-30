@@ -29,6 +29,7 @@ import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.fragments.SynchronizeDataFragment;
 import com.example.tristan.nfcbracelet.fragments.TasksFragment;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.Data;
 import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
 
@@ -41,6 +42,7 @@ public class HomeActivity extends AppCompatActivity
 
     public static final String MIME_TEXT_PLAIN = "text/plain";
 
+    private Data mData;
     private Companion mUser;
     private ArrayList<Companion> mTeamMembers;
     private ArrayList<Task> mTeamTasks;
@@ -65,13 +67,9 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.frame_container, new CompanionsFragment())
-                .commit();
 
         // debug database - to comment
-        debugDB();
+        //debugDB();
 
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
@@ -83,7 +81,8 @@ public class HomeActivity extends AppCompatActivity
         // get companions from team
         TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
         teamCompanionDB.open();
-        mTeamMembers = teamCompanionDB.getTeamByChiefId(mUser.getUserId()).getCompanions();
+        Team teamMembers = teamCompanionDB.getTeamByChiefId(mUser.getUserId());
+        mTeamMembers = teamMembers.getCompanions();
         teamCompanionDB.close();
 
         // debug companions list
@@ -95,7 +94,8 @@ public class HomeActivity extends AppCompatActivity
         // get tasks from team
         TeamTaskDB teamTaskDB = new TeamTaskDB(this);
         teamTaskDB.open();
-        mTeamTasks = teamTaskDB.getTeamByChiefId(mUser.getUserId()).getTasks();
+        Team teamTasks = teamTaskDB.getTeamByChiefId(mUser.getUserId());
+        mTeamTasks = teamTasks.getTasks();
         teamTaskDB.close();
 
         // debug tasks list
@@ -104,8 +104,17 @@ public class HomeActivity extends AppCompatActivity
             Log.d(TAG, task.getLongName());
         }
 
+        // init data team
+        mData = Data.getInstance();
+        mData.setTeam(teamMembers, teamTasks);
+
         // init history table with tasks and companions affected to the team
         initHistoryTable();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.frame_container, new CompanionsFragment())
+                .commit();
     }
 
     private void initHistoryTable() {

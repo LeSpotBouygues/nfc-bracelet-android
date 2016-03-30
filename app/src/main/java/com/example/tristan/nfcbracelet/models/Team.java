@@ -1,12 +1,6 @@
 package com.example.tristan.nfcbracelet.models;
 
-import com.example.tristan.nfcbracelet.utils.RealmString;
-
 import java.util.ArrayList;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Tristan on 18/03/2016.
@@ -72,6 +66,10 @@ public class Team {
         return mCompanionsList;
     }
 
+    public void setCompanions(ArrayList<Companion> companions) {
+        mCompanionsList = companions;
+    }
+
     public void addTask(Task task) {
         mTasksList.add(task);
     }
@@ -86,5 +84,9 @@ public class Team {
 
     public ArrayList<Task> getTasks() {
         return mTasksList;
+    }
+
+    public void setTasks(ArrayList<Task> tasks) {
+        mTasksList = tasks;
     }
 }
