@@ -37,7 +37,13 @@ import java.util.ArrayList;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "HomeActivity";
+
     public static final String MIME_TEXT_PLAIN = "text/plain";
+
+    private Companion mUser;
+    private ArrayList<Companion> mTeamMembers;
+    private ArrayList<Task> mTeamTasks;
 
     NfcAdapter mNfcAdapter;
 
@@ -64,6 +70,49 @@ public class HomeActivity extends AppCompatActivity
                 .replace(R.id.frame_container, new CompanionsFragment())
                 .commit();
 
+        // debug database - to comment
+        debugDB();
+
+        CompanionDB companionDB = new CompanionDB(this);
+        companionDB.open();
+        //mUser = companionDB.getCompanionByBraceletId("");
+        // temporary
+        mUser = companionDB.getCompanionByUserId("56ea7f5bdf04853d33736c19");
+        companionDB.close();
+
+        // get companions from team
+        TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
+        teamCompanionDB.open();
+        mTeamMembers = teamCompanionDB.getTeamByChiefId(mUser.getUserId()).getCompanions();
+        teamCompanionDB.close();
+
+        // debug companions list
+        Log.d(TAG, "== TEAM MEMBERS ==");
+        for (Companion companion : mTeamMembers) {
+            Log.d(TAG, companion.getFirstName());
+        }
+
+        // get tasks from team
+        TeamTaskDB teamTaskDB = new TeamTaskDB(this);
+        teamTaskDB.open();
+        mTeamTasks = teamTaskDB.getTeamByChiefId(mUser.getUserId()).getTasks();
+        teamTaskDB.close();
+
+        // debug tasks list
+        Log.d(TAG, "== TEAM TASKS ==");
+        for (Task task : mTeamTasks) {
+            Log.d(TAG, task.getLongName());
+        }
+
+        // init history table with tasks and companions affected to the team
+        initHistoryTable();
+    }
+
+    private void initHistoryTable() {
+        // TODO
+    }
+
+    private void debugDB() {
         Log.d("DB RESULTS", "=== COMPANIONS ===");
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
