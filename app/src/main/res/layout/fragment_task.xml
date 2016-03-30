@@ -9,128 +9,33 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="15dp" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="70dp">
+            android:layout_height="70dp" >
 
             <TextView
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="RAT Armatures"
-                android:id="@+id/textView2"
+                android:id="@+id/taskName"
                 android:gravity="center_horizontal" />
 
             <Button
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="START"
-                android:id="@+id/button6"
+                android:id="@+id/startAllTasks"
                 android:textSize="10dp"
                 android:layout_marginLeft="10dp" />
-
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:weightSum="1" >
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/imageView12"
-                android:src="@mipmap/reddot"
-                android:layout_marginTop="15dp" />
-
-            <TextView
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/textView8"
-                android:text="Lahoucine KRT"
-                android:textSize="12dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_horizontal" />
-
-            <Button
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="START"
-                android:id="@+id/button10"
-                android:textSize="8dp"
-                android:layout_marginLeft="10dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:weightSum="1" >
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/imageView13"
-                android:src="@mipmap/reddot"
-                android:layout_marginTop="15dp" />
-
-            <TextView
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/textView5"
-                android:text="Adriano MONTEIRO"
-                android:textSize="12dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_horizontal" />
-
-            <Button
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="START"
-                android:id="@+id/button7"
-                android:textSize="8dp"
-                android:layout_marginLeft="10dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:weightSum="1" >
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/imageView14"
-                android:src="@mipmap/reddot"
-                android:layout_marginTop="15dp" />
-
-            <TextView
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/textView6"
-                android:text="Harun UYURCA"
-                android:textSize="12dp"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_horizontal" />
-
-            <Button
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:text="START"
-                android:id="@+id/button8"
-                android:textSize="8dp"
-                android:layout_marginLeft="10dp" />
-        </LinearLayout>
-
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskCompanionsList" />
     </LinearLayout>
 </FrameLayout>

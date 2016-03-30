@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.models.Data;
+import com.example.tristan.nfcbracelet.models.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +63,14 @@ public class TasksFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         int numberOfTasks = mData.getTeam().getNumberOfTasks();
+        ArrayList<Task> tasks = mData.getTeam().getTasks();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         for (int i=0; i < numberOfTasks; i++) {
             TaskFragment taskFragment = new TaskFragment();
-            adapter.addFragment(taskFragment, Integer.toString(i));
+            Bundle bundle = new Bundle();
+            bundle.putString("taskId", tasks.get(i).getTaskId());
+            taskFragment.setArguments(bundle);
+            adapter.addFragment(taskFragment, Integer.toString(i + 1));
         }
         viewPager.setAdapter(adapter);
     }

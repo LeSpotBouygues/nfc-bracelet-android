@@ -11,8 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.tristan.nfcbracelet.R;
+import com.example.tristan.nfcbracelet.adapters.CompanionAdapter;
+import com.example.tristan.nfcbracelet.adapters.TaskCompanionAdapter;
+import com.example.tristan.nfcbracelet.models.Data;
+import com.example.tristan.nfcbracelet.models.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,13 +30,10 @@ import com.example.tristan.nfcbracelet.R;
  */
 public class TaskFragment extends Fragment {
 
-    Button mButton1;
-    Button mButton2;
-    Button mButton3;
-    Button mButton4;
-    ImageView mImageView2;
-    ImageView mImageView3;
-    ImageView mImageView4;
+    private Data mData;
+    private TaskCompanionAdapter adapter;
+    private ListView listView;
+    private Task task;
 
     public TaskFragment() {
         // Required empty public constructor
@@ -39,6 +42,8 @@ public class TaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mData = Data.getInstance();
     }
 
     @Override
@@ -46,73 +51,35 @@ public class TaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_task, container, false);
+        adapter = new TaskCompanionAdapter(getContext(), mData.getTeam().getCompanions());
+        // Attach the adapter to a ListView
+        listView = (ListView) rootView.findViewById(R.id.taskCompanionsList);
+        listView.setAdapter(adapter);
 
-        mButton1 = (Button) rootView.findViewById(R.id.button6);
-        mButton1.setOnClickListener(new View.OnClickListener() {
+        TextView taskName = (TextView) rootView.findViewById(R.id.taskName);
+        Bundle bundle = getArguments();
+        task = mData.getTeam().getTaskByTaskId(bundle.getString("taskId"));
+        taskName.setText(task.getLongName());
+
+        final Button startAllTasksButton = (Button) rootView.findViewById(R.id.startAllTasks);
+        startAllTasksButton.setText("START");
+        startAllTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mButton1.getText() == "STOP") {
-                    mButton1.setText("START");
-                    mButton2.setText("START");
-                    mImageView2.setImageResource(R.mipmap.reddot);
-                    mButton3.setText("START");
-                    mImageView3.setImageResource(R.mipmap.reddot);
-                    mButton4.setText("START");
-                    mImageView4.setImageResource(R.mipmap.reddot);
-
-                } else {
-                    mButton1.setText("STOP");
-                    mButton2.setText("STOP");
-                    mImageView2.setImageResource(R.mipmap.green_dot);
-                    mButton3.setText("STOP");
-                    mImageView3.setImageResource(R.mipmap.green_dot);
-                    mButton4.setText("STOP");
-                    mImageView4.setImageResource(R.mipmap.green_dot);
-                }
-            }
-        });
-
-        mImageView2 = (ImageView) rootView.findViewById(R.id.imageView12);
-        mButton2 = (Button) rootView.findViewById(R.id.button10);
-        mButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mButton2.getText() == "STOP") {
-                    mButton2.setText("START");
-                    mImageView2.setImageResource(R.mipmap.reddot);
-                } else {
-                    mButton2.setText("STOP");
-                    mImageView2.setImageResource(R.mipmap.green_dot);
-                }
-            }
-        });
-
-        mImageView3 = (ImageView) rootView.findViewById(R.id.imageView13);
-        mButton3 = (Button) rootView.findViewById(R.id.button7);
-        mButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mButton3.getText() == "STOP") {
-                    mButton3.setText("START");
-                    mImageView3.setImageResource(R.mipmap.reddot);
-                } else {
-                    mButton3.setText("STOP");
-                    mImageView3.setImageResource(R.mipmap.green_dot);
-                }
-            }
-        });
-
-        mImageView4 = (ImageView) rootView.findViewById(R.id.imageView14);
-        mButton4 = (Button) rootView.findViewById(R.id.button8);
-        mButton4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mButton4.getText() == "STOP") {
-                    mButton4.setText("START");
-                    mImageView4.setImageResource(R.mipmap.reddot);
-                } else {
-                    mButton4.setText("STOP");
-                    mImageView4.setImageResource(R.mipmap.green_dot);
+                if (startAllTasksButton.getText() == "START") {
+                    startAllTasksButton.setText("STOP");
+                    for (int i=0; i < listView.getCount(); i++) {
+                        View view = listView.getChildAt(i);
+                        ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.green_dot);
+                        ((Button)view.findViewById(R.id.startTaskCompanion)).setText("STOP");
+                    }
+                } else if (startAllTasksButton.getText() == "STOP") {
+                    startAllTasksButton.setText("START");
+                    for (int i=0; i < listView.getCount(); i++) {
+                        View view = listView.getChildAt(i);
+                        ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.reddot);
+                        ((Button)view.findViewById(R.id.startTaskCompanion)).setText("START");
+                    }
                 }
             }
         });

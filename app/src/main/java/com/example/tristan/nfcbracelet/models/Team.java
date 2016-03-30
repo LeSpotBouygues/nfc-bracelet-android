@@ -78,6 +78,14 @@ public class Team {
         return mTasksList.get(id);
     }
 
+    public Task getTaskByTaskId(String id) {
+        for (Task task : mTasksList) {
+            if (task.getTaskId() == id)
+                return task;
+        }
+        return null;
+    }
+
     public int getNumberOfTasks() {
         return mTasksList.size();
     }
