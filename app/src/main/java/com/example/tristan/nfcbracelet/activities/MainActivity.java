@@ -10,32 +10,20 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
-import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.database.TaskDB;
-import com.example.tristan.nfcbracelet.database.TeamDB;
-import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
+import com.example.tristan.nfcbracelet.database.TeamCompanionDB;
+import com.example.tristan.nfcbracelet.database.TeamTaskDB;
 import com.example.tristan.nfcbracelet.http.HttpApi;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
-import com.example.tristan.nfcbracelet.utils.RealmString;
-import com.example.tristan.nfcbracelet.utils.RealmStringDeserializer;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,29 +32,17 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmAsyncTask;
-import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.RealmResults;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class MainActivity extends Activity {
 
     public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
     public static final String MIME_TEXT_PLAIN = "text/plain";
-    public static final String TAG = "NfcDemo";
+    public static final String TAG = "MainActivity";
 
     private TextView mTextView;
     private NfcAdapter mNfcAdapter;
@@ -211,7 +187,6 @@ public class MainActivity extends Activity {
 
     private void fillDatabase() {
         getCompanionsFromServer();
-        getTasksFromServer();
     }
 
     private void getTasksFromServer() {
@@ -234,6 +209,7 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET TASKS", responseString);
                     fillTasksInDB(responseString);
+                    getTeamsFromServer();
                 }
             }
         });
@@ -259,7 +235,7 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET COMPANIONS", responseString);
                     fillCompanionsInDB(responseString);
-                    getTeamsFromServer();
+                    getTasksFromServer();
                 }
             }
         });
@@ -377,8 +353,10 @@ public class MainActivity extends Activity {
         try {
             JSONArray jsonResponse = new JSONArray(response);
 
-            TeamDB teamDB = new TeamDB(this);
+            TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
+            TeamTaskDB teamTaskDB = new TeamTaskDB(this);
             CompanionDB  companionDB = new CompanionDB(this);
+            TaskDB taskDB = new TaskDB(this);
 
             for (int i=0; i < jsonResponse.length(); i++) {
                 Log.d(TAG, "Team "+ Integer.toString(i));
@@ -394,13 +372,27 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "add companion "+ companion.getUserId());
                     companionDB.close();
                 }
+                JSONArray tasks = jsonObject.getJSONArray("tasks");
+                for (int k=0; k < tasks.length(); k++) {
+                    taskDB.open();
+                    Task task = taskDB.getTaskByTaskId(tasks.getJSONObject(k).getString("_id"));
+                    team.addTask(task);
+                    Log.d(TAG, "add task "+ task.getTaskId());
+                    taskDB.close();
+                }
                 Log.d(TAG, "team "+ team.getTeamId() + " precreated");
-                teamDB.open();
-                if (teamDB.getTeamByTeamId(team.getTeamId()) == null)
-                    teamDB.insertTeam(team);
+                teamCompanionDB.open();
+                if (teamCompanionDB.getTeamByTeamId(team.getTeamId()) == null)
+                    teamCompanionDB.insertTeam(team);
                 else
-                    teamDB.updateTeam(team);
-                teamDB.close();
+                    teamCompanionDB.updateTeam(team);
+                teamCompanionDB.close();
+                teamTaskDB.open();
+                if (teamTaskDB.getTeamByTeamId(team.getTeamId()) == null)
+                    teamTaskDB.insertTeam(team);
+                else
+                    teamTaskDB.updateTeam(team);
+                teamTaskDB.close();
             }
 
         } catch (JSONException e) {

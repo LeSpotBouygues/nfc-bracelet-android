@@ -4,18 +4,12 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,19 +22,17 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
-import com.example.tristan.nfcbracelet.database.DBHelper;
-import com.example.tristan.nfcbracelet.database.TeamDB;
+import com.example.tristan.nfcbracelet.database.TaskDB;
+import com.example.tristan.nfcbracelet.database.TeamCompanionDB;
+import com.example.tristan.nfcbracelet.database.TeamTaskDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.fragments.SynchronizeDataFragment;
 import com.example.tristan.nfcbracelet.fragments.TasksFragment;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
-import com.example.tristan.nfcbracelet.utils.RealmString;
 
 import java.util.ArrayList;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -81,16 +73,36 @@ public class HomeActivity extends AppCompatActivity
             Log.d("DB RESULTS", companion.getFirstName());
         }
         Log.d("DB RESULTS", "=== TEAMS ===");
-        TeamDB teamDB = new TeamDB(this);
-        teamDB.open();
-        teamDB.displayTeamsTable();
-        ArrayList<Team> allTeams = teamDB.getAllTeams();
-        teamDB.close();
+        TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
+        teamCompanionDB.open();
+        teamCompanionDB.displayTable();
+        ArrayList<Team> allTeams = teamCompanionDB.getAllTeams();
+        teamCompanionDB.close();
         for (Team team : allTeams) {
             Log.d("DB RESULTS", "TEAM = " + team.getTeamId());
             //Log.d("DB RESULTS", team.getChief().getFirstName());
             for (Companion companion : team.getCompanions()) {
                 Log.d("DB RESULTS", "    " + companion.getFirstName());
+            }
+        }
+        Log.d("DB RESULTS", "=== TASKS ===");
+        TaskDB taskDB = new TaskDB(this);
+        taskDB.open();
+        ArrayList<Task> taskResults = taskDB.getAllTasks();
+        taskDB.close();
+        for (Task task : taskResults) {
+            Log.d("DB RESULTS", task.getLongName());
+        }
+        TeamTaskDB teamTaskDB = new TeamTaskDB(this);
+        teamTaskDB.open();
+        teamTaskDB.displayTable();
+        ArrayList<Team> allTeamsTasks = teamTaskDB.getAllTeams();
+        teamTaskDB.close();
+        for (Team team : allTeamsTasks) {
+            Log.d("DB RESULTS", "TEAM = " + team.getTeamId());
+            //Log.d("DB RESULTS", team.getChief().getFirstName());
+            for (Task task : team.getTasks()) {
+                Log.d("DB RESULTS", "    " + task.getLongName());
             }
         }
     }

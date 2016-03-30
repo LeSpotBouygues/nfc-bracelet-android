@@ -17,9 +17,11 @@ public class Team {
     private String chiefId;
     private Companion chief;
     private ArrayList<Companion> mCompanionsList;
+    private ArrayList<Task> mTasksList;
 
     public Team() {
         mCompanionsList = new ArrayList<>();
+        mTasksList = new ArrayList<>();
     }
 
     public int getId() {
@@ -62,11 +64,27 @@ public class Team {
         return mCompanionsList.get(id);
     }
 
-    public int getSize() {
+    public int getNumberOfCompanions() {
         return mCompanionsList.size();
     }
 
     public ArrayList<Companion> getCompanions() {
         return mCompanionsList;
+    }
+
+    public void addTask(Task task) {
+        mTasksList.add(task);
+    }
+
+    public Task getTaskByIndex(int id) {
+        return mTasksList.get(id);
+    }
+
+    public int getNumberOfTasks() {
+        return mTasksList.size();
+    }
+
+    public ArrayList<Task> getTasks() {
+        return mTasksList;
     }
 }

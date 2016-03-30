@@ -27,11 +27,17 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COMPANIONS_COL_BRACELET_ID = "bracelet_id";
     private static final String COMPANIONS_COL_CHIEF = "chief";
 
-    private static final String TABLE_TEAMS = "teams_table";
-    private static final String TEAMS_COL_ID = "id";
-    private static final String TEAMS_COL_TEAM_ID = "team_id";
-    private static final String TEAMS_COL_CHIEF_ID = "chief_id";
-    private static final String TEAMS_COL_COMPANION_ID = "companion_id";
+    private static final String TABLE_TEAMS_COMPANIONS = "teams_companions_table";
+    private static final String TEAMS_COMPANIONS_COL_ID = "id";
+    private static final String TEAMS_COMPANIONS_COL_TEAM_ID = "team_id";
+    private static final String TEAMS_COMPANIONS_COL_CHIEF_ID = "chief_id";
+    private static final String TEAMS_COMPANIONS_COL_COMPANION_ID = "companion_id";
+
+    private static final String TABLE_TEAMS_TASKS = "teams_tasks_table";
+    private static final String TEAMS_TASKS_COL_ID = "id";
+    private static final String TEAMS_TASKS_COL_TEAM_ID = "team_id";
+    private static final String TEAMS_TASKS_COL_CHIEF_ID = "chief_id";
+    private static final String TEAMS_TASKS_COL_TASK_ID = "task_id";
 
     private static final String TABLE_TASKS = "tasks_table";
     private static final String TASKS_COL_ID = "id";
@@ -54,11 +60,17 @@ public class DBHelper extends SQLiteOpenHelper {
             + COMPANIONS_COL_POSITION + " TEXT NOT NULL, "
             + COMPANIONS_COL_BRACELET_ID + " TEXT NOT NULL);";
 
-    private static final String CREATE_TABLE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + " ("
-            + TEAMS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + TEAMS_COL_TEAM_ID + " TEXT NOT NULL, "
-            + TEAMS_COL_CHIEF_ID + " TEXT NOT NULL, "
-            + TEAMS_COL_COMPANION_ID + " TEXT NOT NULL);";
+    private static final String CREATE_TABLE_TEAMS_COMPANIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS_COMPANIONS + " ("
+            + TEAMS_COMPANIONS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + TEAMS_COMPANIONS_COL_TEAM_ID + " TEXT NOT NULL, "
+            + TEAMS_COMPANIONS_COL_CHIEF_ID + " TEXT NOT NULL, "
+            + TEAMS_COMPANIONS_COL_COMPANION_ID + " TEXT NOT NULL);";
+
+    private static final String CREATE_TABLE_TEAMS_TASKS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS_TASKS + " ("
+            + TEAMS_TASKS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + TEAMS_TASKS_COL_TEAM_ID + " TEXT NOT NULL, "
+            + TEAMS_TASKS_COL_CHIEF_ID + " TEXT NOT NULL, "
+            + TEAMS_TASKS_COL_TASK_ID + " TEXT NOT NULL);";
 
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE IF NOT EXISTS " + TABLE_TASKS + " ("
             + TASKS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -81,7 +93,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //on crée la table à partir de la requête écrite dans la variable CREATE_BDD
         db.execSQL(CREATE_TABLE_COMPANIONS);
-        db.execSQL(CREATE_TABLE_TEAMS);
+        db.execSQL(CREATE_TABLE_TEAMS_COMPANIONS);
+        db.execSQL(CREATE_TABLE_TEAMS_TASKS);
         db.execSQL(CREATE_TABLE_TASKS);
         db.execSQL(CREATE_TABLE_HISTORY);
     }
@@ -91,7 +104,8 @@ public class DBHelper extends SQLiteOpenHelper {
         //On peut faire ce qu'on veut ici moi j'ai décidé de supprimer la table et de la recréer
         //comme ça lorsque je change la version les id repartent de 0
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPANIONS + ";");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS_COMPANIONS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS_TASKS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY + ";");
         onCreate(db);
