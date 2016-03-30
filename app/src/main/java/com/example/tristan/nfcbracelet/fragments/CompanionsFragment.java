@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.activities.CompanionActivity;
+import com.example.tristan.nfcbracelet.activities.HomeActivity;
 import com.example.tristan.nfcbracelet.adapters.CompanionAdapter;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Data;
@@ -33,6 +34,8 @@ public class CompanionsFragment extends Fragment {
     private static final String TAG = "CompanionsFragment";
 
     private Data mData;
+    private CompanionAdapter adapter;
+    private ListView listView;
 
     public CompanionsFragment() {
         // Required empty public constructor
@@ -51,22 +54,10 @@ public class CompanionsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_companions,
                 container, false);
-        final CompanionAdapter adapter = new CompanionAdapter(getContext(), mData.getTeam().getCompanions());
+        adapter = new CompanionAdapter(getContext(), mData.getTeam().getCompanions());
         // Attach the adapter to a ListView
-        ListView listView = (ListView) rootView.findViewById(R.id.companionsList);
+        listView = (ListView) rootView.findViewById(R.id.companionsList);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Companion companion = adapter.getItem(position);
-                Log.d(TAG, "Click on " + companion.getFirstName());
-                CheckBox checkBox = (CheckBox) adapter.getView(position, view.findViewById(R.id.checkBox), parent);
-                if (checkBox.isChecked()) {
-                    Intent intent = new Intent(getActivity(), CompanionActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
 
         return rootView;
     }

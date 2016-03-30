@@ -5,14 +5,13 @@
 
     <CheckBox
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/checkBox" />
 
     <TextView
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Lahoucine KRT"
         android:id="@+id/companionName"
         android:layout_gravity="top|center_horizontal"
         android:gravity="center" />
