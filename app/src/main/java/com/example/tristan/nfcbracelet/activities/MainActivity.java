@@ -21,10 +21,12 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.TaskDB;
 import com.example.tristan.nfcbracelet.database.TeamDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
 import com.example.tristan.nfcbracelet.http.HttpApi;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
 import com.example.tristan.nfcbracelet.utils.RealmString;
 import com.example.tristan.nfcbracelet.utils.RealmStringDeserializer;
@@ -95,7 +97,7 @@ public class MainActivity extends Activity {
         }
 
         handleIntent(getIntent());
-        getDataFromServer();
+        initDatabase();
     }
 
     @Override
@@ -199,17 +201,48 @@ public class MainActivity extends Activity {
         }
     }
 
-    void goToProfile() {
+    private void goToProfile() {
         Intent intent = new Intent(this, HomeActivity.class);
         String message = mTextView.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
-    void getDataFromServer() {
+    private void initDatabase() {
+        getCompanionsFromServer();
+        getTasksFromServer();
+        //initHistoryTable();
+    }
+
+    private void getTasksFromServer() {
+
+        // get all tasks
+        Request requestTasks = new Request.Builder()
+                .url(httpApi.API_ADDRESS + httpApi.TASKS_ROUTE)
+                .build();
+        httpApi.getClient().newCall(requestTasks).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    String responseString = response.body().string();
+                    Log.d("GET TASKS", responseString);
+                    fillTasksInDB(responseString);
+                }
+            }
+        });
+    }
+
+    private void getCompanionsFromServer() {
 
         // get all companions
-        /*Request requestCompanions = new Request.Builder()
+        Request requestCompanions = new Request.Builder()
                 .url(httpApi.API_ADDRESS + httpApi.COMPANIONS_ROUTE)
                 .build();
         httpApi.getClient().newCall(requestCompanions).enqueue(new Callback() {
@@ -226,9 +259,13 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET COMPANIONS", responseString);
                     fillCompanionsInDB(responseString);
+                    getTeamsFromServer();
                 }
             }
-        });*/
+        });
+    }
+
+    private void getTeamsFromServer() {
 
         // get all teams
         Request requestTeams = new Request.Builder()
@@ -253,7 +290,30 @@ public class MainActivity extends Activity {
         });
     }
 
-    void fillCompanionsInDB(String response) {
+    private void fillTasksInDB(String response) {
+        try {
+            JSONArray jsonResponse = new JSONArray(response);
+            TaskDB taskDB = new TaskDB(this);
+
+            for (int i=0; i < jsonResponse.length(); i++) {
+                JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                Task task = new Task();
+                task.setTaskId(jsonObject.getString("_id"));
+                task.setShortName(jsonObject.getString("label_short"));
+                task.setLongName(jsonObject.getString("label_long"));
+
+                taskDB.open();
+                taskDB.insertTask(task);
+                taskDB.close();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // Toast.makeText(this, "Companions updated", Toast.LENGTH_SHORT).show();
+    }
+
+    private void fillCompanionsInDB(String response) {
         try {
             JSONArray jsonResponse = new JSONArray(response);
             CompanionDB companionDB = new CompanionDB(this);
