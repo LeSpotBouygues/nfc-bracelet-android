@@ -8,10 +8,12 @@ import io.realm.annotations.PrimaryKey;
  */
 public class History {
     private int id;
+    private boolean isStarted;
     private String duration;
     private Companion companion;
     private Task task;
     private String date;
+    private String lastStart;
 
     public int getId() {
         return id;
@@ -51,5 +53,33 @@ public class History {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getLastStart() {
+        return lastStart;
+    }
+
+    public void setLastStart(String lastStart) {
+        this.lastStart = lastStart;
+    }
+
+    public boolean isStarted() {
+        return isStarted;
+    }
+
+    public void setStarted(boolean isStarted) {
+        this.isStarted = isStarted;
+    }
+
+    public int isStartedInt() {
+        if (isStarted)
+            return 1;
+        return 0;
+    }
+
+    public void setStartedInt(int started) {
+        if (started == 1)
+            isStarted = true;
+        isStarted = false;
     }
 }

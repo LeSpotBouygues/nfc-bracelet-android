@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.database.TaskDB;
 import com.example.tristan.nfcbracelet.database.TeamCompanionDB;
 import com.example.tristan.nfcbracelet.database.TeamTaskDB;
@@ -30,10 +31,13 @@ import com.example.tristan.nfcbracelet.fragments.SynchronizeDataFragment;
 import com.example.tristan.nfcbracelet.fragments.TasksFragment;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Data;
+import com.example.tristan.nfcbracelet.models.History;
 import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
+import com.example.tristan.nfcbracelet.utils.Date;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -118,7 +122,28 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void initHistoryTable() {
-        // TODO
+        String date = Date.getInstance().getDateToString();
+        HistoryDB historyDB = new HistoryDB(this);
+        for (Companion companion : mTeamMembers) {
+            for (Task task : mTeamTasks) {
+                History history = new History();
+                history.setCompanion(companion);
+                history.setDuration("0");
+                history.setDate(date);
+                history.setTask(task);
+                history.setStartedInt(0);
+                history.setLastStart("");
+                historyDB.open();
+                if (historyDB.getHistoryByCompanionIdByTaskIdByDate(companion.getUserId(), task.getTaskId(), date) == null)
+                    historyDB.insertHistory(history);
+                else
+                    historyDB.updateHistory(history, mData.getTeam());
+                historyDB.close();
+            }
+        }
+        historyDB.open();
+        historyDB.displayTable();
+        historyDB.close();
     }
 
     private void debugDB() {
