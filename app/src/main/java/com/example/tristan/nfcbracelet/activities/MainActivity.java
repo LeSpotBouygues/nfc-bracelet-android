@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.database.TaskDB;
 import com.example.tristan.nfcbracelet.database.TeamDB;
 import com.example.tristan.nfcbracelet.fragments.CompanionsFragment;
@@ -97,7 +98,7 @@ public class MainActivity extends Activity {
         }
 
         handleIntent(getIntent());
-        initDatabase();
+        fillDatabase();
     }
 
     @Override
@@ -208,10 +209,9 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    private void initDatabase() {
+    private void fillDatabase() {
         getCompanionsFromServer();
         getTasksFromServer();
-        //initHistoryTable();
     }
 
     private void getTasksFromServer() {
@@ -285,10 +285,33 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET TEAMS", responseString);
                     fillTeamsInDB(responseString);
+                    //initHistoryTable();
                 }
             }
         });
     }
+
+    /*private void initHistoryTable() {
+        try {
+            HistoryDB historyDB = new HistoryDB(this);
+
+            for (int i=0; i < jsonResponse.length(); i++) {
+                JSONObject jsonObject = jsonResponse.getJSONObject(i);
+                Task task = new Task();
+                task.setTaskId(jsonObject.getString("_id"));
+                task.setShortName(jsonObject.getString("label_short"));
+                task.setLongName(jsonObject.getString("label_long"));
+
+                taskDB.open();
+                taskDB.insertTask(task);
+                taskDB.close();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // Toast.makeText(this, "Companions updated", Toast.LENGTH_SHORT).show();
+    }*/
 
     private void fillTasksInDB(String response) {
         try {

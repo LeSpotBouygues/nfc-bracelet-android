@@ -7,17 +7,17 @@ import io.realm.annotations.PrimaryKey;
  * Created by Tristan on 24/03/2016.
  */
 public class History {
-    private String id;
+    private int id;
     private String duration;
     private Companion companion;
     private Task task;
     private String date;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

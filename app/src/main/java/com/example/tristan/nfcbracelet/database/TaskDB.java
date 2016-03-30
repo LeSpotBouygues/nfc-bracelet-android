@@ -62,7 +62,7 @@ public class TaskDB {
             return db.insert(TABLE_TASKS, null, values);
         }
 
-        public Task getCompanionByTaskId(String taskId) {
+        public Task getTaskByTaskId(String taskId) {
             Cursor c = db.query(TABLE_TASKS, new String[] {COL_ID, COL_TASK_ID, COL_SHORT_NAME, COL_LONG_NAME}, COL_TASK_ID + " LIKE \"" + taskId +"\"", null, null, null, null);
             return cursorToTask(c);
         }
