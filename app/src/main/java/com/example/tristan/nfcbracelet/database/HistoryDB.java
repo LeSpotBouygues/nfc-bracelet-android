@@ -85,9 +85,12 @@ public class HistoryDB {
             //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
             String companionId = history.getCompanion().getUserId();
             values.put(COL_COMPANION_ID, companionId);
-            values.put(COL_TASK_ID, history.getTask().getTaskId());
             String taskId = team.getTaskByIndex(i).getTaskId();
             values.put(COL_TASK_ID, taskId);
+            values.put(COL_DURATION, history.getDuration());
+            values.put(COL_DATE, history.getDate());
+            values.put(COL_LAST_START, history.getLastStart());
+            values.put(COL_STARTED, history.isStartedInt());
             db.update(TABLE_HISTORY, values, COL_TASK_ID + " LIKE \"" + taskId + "\" AND " + COL_COMPANION_ID + " LIKE \"" + companionId + "\"", null);
         }
     }
