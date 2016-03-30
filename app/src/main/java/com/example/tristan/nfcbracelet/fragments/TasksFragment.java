@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.tristan.nfcbracelet.R;
+import com.example.tristan.nfcbracelet.models.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class TasksFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private Data mData;
 
     public TasksFragment() {
         // Required empty public constructor
@@ -38,6 +40,9 @@ public class TasksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        mData = Data.getInstance();
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_tasks, container, false);
         viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
@@ -56,10 +61,12 @@ public class TasksFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        int numberOfTasks = mData.getTeam().getNumberOfTasks();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-        adapter.addFragment(new TaskFragment(), "TASK 1");
-        adapter.addFragment(new TaskFragment(), "TASK 2");
-        adapter.addFragment(new TaskFragment(), "TASK 3");
+        for (int i=0; i < numberOfTasks; i++) {
+            TaskFragment taskFragment = new TaskFragment();
+            adapter.addFragment(taskFragment, Integer.toString(i));
+        }
         viewPager.setAdapter(adapter);
     }
 
