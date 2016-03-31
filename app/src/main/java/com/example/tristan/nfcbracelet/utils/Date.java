@@ -33,4 +33,23 @@ public class Date {
         Log.d(TAG, date);
         return date;
     }
+
+    public String getTimeNowToString() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+        int hours = calendar.get(Calendar.HOUR);
+        if (hours < 10)
+            time += "0";
+        time += Integer.toString(hours) + ":";
+        int minutes = calendar.get(Calendar.MINUTE);
+        if (minutes < 10)
+            time += "0";
+        time += Integer.toString(minutes) + ":";
+        int seconds = calendar.get(Calendar.SECOND);
+        if (seconds < 10)
+            time += "0";
+        time += Integer.toString(seconds);
+        Log.d(TAG, time);
+        return time;
+    }
 }

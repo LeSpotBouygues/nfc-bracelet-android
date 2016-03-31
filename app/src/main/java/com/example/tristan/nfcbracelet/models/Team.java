@@ -1,11 +1,15 @@
 package com.example.tristan.nfcbracelet.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
  * Created by Tristan on 18/03/2016.
  */
 public class Team {
+    final private static String TAG = "Team";
+
     private int id;
     private String teamId;
     private String chiefId;
@@ -58,6 +62,15 @@ public class Team {
         return mCompanionsList.get(id);
     }
 
+    public Companion getCompanionByUserId(String id) {
+        for (Companion companion : mCompanionsList) {
+            Log.d(TAG, "companion_id="+companion.getUserId());
+            if (companion.getUserId().equals(id))
+                return companion;
+        }
+        return null;
+    }
+
     public int getNumberOfCompanions() {
         return mCompanionsList.size();
     }
@@ -80,7 +93,7 @@ public class Team {
 
     public Task getTaskByTaskId(String id) {
         for (Task task : mTasksList) {
-            if (task.getTaskId() == id)
+            if (task.getTaskId().equals(id))
                 return task;
         }
         return null;

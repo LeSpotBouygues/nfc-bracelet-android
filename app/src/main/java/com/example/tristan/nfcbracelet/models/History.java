@@ -1,8 +1,5 @@
 package com.example.tristan.nfcbracelet.models;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by Tristan on 24/03/2016.
  */

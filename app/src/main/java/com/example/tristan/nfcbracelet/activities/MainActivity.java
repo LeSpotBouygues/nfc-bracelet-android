@@ -12,6 +12,8 @@ import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.example.tristan.nfcbracelet.http.HttpApi;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +48,8 @@ public class MainActivity extends Activity {
     public static final String TAG = "MainActivity";
 
     private TextView mTextView;
+    private ProgressBarCircularIndeterminate spinner;
+
     private NfcAdapter mNfcAdapter;
     private HttpApi httpApi;
 
@@ -56,6 +61,7 @@ public class MainActivity extends Activity {
         httpApi = HttpApi.getInstance();
 
         mTextView = (TextView) findViewById(R.id.textView_explanation);
+        spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinner1);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -398,6 +404,14 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                spinner.setVisibility(View.GONE);
+            }
+        });
+
         //Toast.makeText(this, "Teams updated", Toast.LENGTH_SHORT).show();
     }
 
@@ -458,7 +472,7 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                mTextView.setText("Read content: " + result);
+                //mTextView.setText("Read content: " + result);
                 //mTextView.setText("56e82962eef41015062d408c");
                 goToProfile();
             }

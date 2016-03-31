@@ -2,6 +2,7 @@ package com.example.tristan.nfcbracelet.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,13 +45,16 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
         startTaskButton.setText("START");
 
         // Populate the data into the template view using the data object
-        companionName.setText(companion.getFirstName() + " " + companion.getLastName());
+        companionName.setText(companion.getLastName() + " " + companion.getFirstName());
         companionName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO : check presence
                 //if (checkBox.isChecked()) {
                     Intent intent = new Intent(getContext(), CompanionActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("companionId", companion.getUserId());
+                    intent.putExtras(bundle);
                     getContext().startActivity(intent);
                 /*} else {
                     Toast.makeText(getContext(), companionName.getText() + "'s presence hasn't been checked", Toast.LENGTH_LONG).show();

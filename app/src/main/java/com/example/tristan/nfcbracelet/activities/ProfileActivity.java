@@ -23,10 +23,6 @@ import com.example.tristan.nfcbracelet.models.Companion;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
-
 /**
  * Created by Tristan on 25/02/2016.
  */
@@ -48,12 +44,12 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // To delete once data model is finished
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
+        /*RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .deleteRealmIfMigrationNeeded()
                 .build();
 
         //RealmConfiguration config = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(config);
+        Realm.setDefaultConfiguration(config);*/
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);

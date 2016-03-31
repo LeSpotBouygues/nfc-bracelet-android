@@ -14,8 +14,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mise à jour"
-            android:id="@+id/button2"
+            android:text="Send data"
+            android:id="@+id/sendDataButton"
             android:layout_gravity="center_horizontal|top"
             android:layout_marginTop="250dp" />
 
@@ -23,8 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Dernière mise à jour le : 23:03:2016"
-            android:id="@+id/textView29"
+            android:text="Last synchronization : 31:03:2016 at 07:27"
+            android:id="@+id/sendButtonText"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp" />
 

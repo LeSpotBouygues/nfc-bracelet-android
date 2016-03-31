@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="1"
+        android:id="@+id/firstLine">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/taskLight"
+            android:src="@mipmap/reddot"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/taskName"
+            android:textSize="14dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/startTask"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="10dp"
+            android:text="START" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/secondLine">
+
+        <Chronometer
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:id="@+id/chrono"
+            android:gravity="center_horizontal" />
+
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#1E88E5"
+            android:text="EDIT" />
+
+    </LinearLayout>
+</LinearLayout>

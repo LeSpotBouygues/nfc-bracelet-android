@@ -55,7 +55,7 @@ public class SynchronizeDataFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_synchronize_data,
                 container, false);
-        final Button button = (Button) view.findViewById(R.id.button2);
+        final Button button = (Button) view.findViewById(R.id.sendDataButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendData();

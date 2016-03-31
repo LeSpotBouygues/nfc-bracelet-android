@@ -59,7 +59,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle("Team");
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -73,13 +73,14 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // debug database - to comment
-        //debugDB();
+        debugDB();
 
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
         //mUser = companionDB.getCompanionByBraceletId("");
+        //82a1b0e4
         // temporary
-        mUser = companionDB.getCompanionByUserId("56ea7f5bdf04853d33736c19");
+        mUser = companionDB.getCompanionByUserId("56ea7f5bdf04853d33736c16");
         companionDB.close();
 
         // get companions from team
@@ -123,6 +124,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void initHistoryTable() {
         String date = Date.getInstance().getDateToString();
+        String time = Date.getInstance().getTimeNowToString();
         HistoryDB historyDB = new HistoryDB(this);
         for (Companion companion : mTeamMembers) {
             for (Task task : mTeamTasks) {
@@ -132,7 +134,7 @@ public class HomeActivity extends AppCompatActivity
                 history.setDate(date);
                 history.setTask(task);
                 history.setStartedInt(0);
-                history.setLastStart("");
+                history.setLastStart(time);
                 historyDB.open();
                 if (historyDB.getHistoryByCompanionIdByTaskIdByDate(companion.getUserId(), task.getTaskId(), date) == null)
                     historyDB.insertHistory(history);
@@ -246,14 +248,17 @@ public class HomeActivity extends AppCompatActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.frame_container, new CompanionsFragment())
                     .commit();
+            getSupportActionBar().setTitle("Team");
         } else if (id == R.id.nav_tasks) {
             fragmentManager.beginTransaction()
                     .replace(R.id.frame_container, new TasksFragment())
                     .commit();
+            getSupportActionBar().setTitle("Tasks");
         } else if (id == R.id.nav_send) {
             fragmentManager.beginTransaction()
                     .replace(R.id.frame_container, new SynchronizeDataFragment())
                     .commit();
+            getSupportActionBar().setTitle("Send data");
         } else if (id == R.id.nav_manage) {
 
         }
