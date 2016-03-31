@@ -76,7 +76,7 @@ public class CompanionActivity extends AppCompatActivity {
         jobName.setText(companion.getPosition());
 
         // debug history table
-        Button debugHistory = (Button) findViewById(R.id.debugHistory);
+        /*Button debugHistory = (Button) findViewById(R.id.debugHistory);
         debugHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +84,7 @@ public class CompanionActivity extends AppCompatActivity {
                 historyDB.displayTable();
                 historyDB.close();
             }
-        });
+        });*/
     }
 
 }

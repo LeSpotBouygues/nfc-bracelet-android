@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,8 +61,8 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             }
         }
         final History history = historySave;
-        final String date = Date.getInstance().getDateToString();
-        final String time = Date.getInstance().getTimeNowToString();
+        final String date = DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString();
+        final String time = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
@@ -78,17 +79,21 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         taskName.setText(task.getLongName());
         startTaskButton.setText("START");
         if (history.isStarted()) {
+            Log.d(TAG, "HISTORY STARTED");
             startTaskButton.setText("STOP");
             light.setImageResource(R.mipmap.green_dot);
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 java.util.Date lastStart = sdf.parse(history.getLastStart());
-                chronometer.setBase(SystemClock.elapsedRealtime() - lastStart.getTime());
+                chronometer.setBase(SystemClock.elapsedRealtime() - (Integer.parseInt(history.getDuration()) * 60000));
                 chronometer.start();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        } else {
+            Log.d(TAG, "HISTORY STOPPED");
         }
+
 
         startTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +101,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 if (startTaskButton.getText().equals("START")) {
                     startTaskButton.setText("STOP");
                     light.setImageResource(R.mipmap.green_dot);
-                    chronometer.setBase(SystemClock.elapsedRealtime());
+                    chronometer.setBase(SystemClock.elapsedRealtime() - (Integer.parseInt(history.getDuration()) * 60000));
                     chronometer.start();
 
                     history.setStarted(true);
@@ -110,7 +115,12 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     light.setImageResource(R.mipmap.reddot);
                     chronometer.stop();
                     history.setStarted(false);
-                    history.setDuration("50");
+                    long timeElapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
+                    final int hours = (int) (timeElapsed / 3600000);
+                    final int minutes = (int) (timeElapsed - hours * 3600000) / 60000;
+                    Log.d(TAG, "hours = " + Integer.toString(hours));
+                    Log.d(TAG, "minutes = " + Integer.toString(minutes));
+                    history.setDuration(Integer.toString(hours * 60 + minutes));
                     historyDB.open();
                     historyDB.updateSingleHistory(history);
                     historyDB.close();
@@ -126,7 +136,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     light.setImageResource(R.mipmap.reddot);
                     chronometer.stop();
 
-                    history.setStarted(true);
+                    history.setStarted(false);
                     history.setLastStart(time);
                     history.setDate(date);
                     historyDB.open();
@@ -147,12 +157,12 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 final Slider sliderHours = (Slider) dialog.findViewById(R.id.sliderHours);
                 sliderHours.setValue(hours);
                 final TextView hoursValue = (TextView) dialog.findViewById(R.id.hoursValue);
-                hoursValue.setText(Integer.toString(sliderHours.getValue()));
+                hoursValue.setText(Integer.toString(hours));
 
                 final Slider sliderMinutes = (Slider) dialog.findViewById(R.id.sliderMinutes);
                 sliderMinutes.setValue(minutes);
                 final TextView minutesValue = (TextView) dialog.findViewById(R.id.minutesValue);
-                minutesValue.setText(Integer.toString(sliderMinutes.getValue()));
+                minutesValue.setText(Integer.toString(minutes));
 
                 sliderHours.setOnValueChangedListener(new Slider.OnValueChangedListener() {
                     @Override
@@ -174,6 +184,10 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     @Override
                     public void onClick(View v) {
                         chronometer.setText(String.valueOf(sliderHours.getValue() + ":" + sliderMinutes.getValue()));
+                        history.setDuration(Integer.toString(sliderHours.getValue() * 60 + sliderMinutes.getValue()));
+                        historyDB.open();
+                        historyDB.updateSingleHistory(history);
+                        historyDB.close();
                         dialog.dismiss();
                     }
                 });

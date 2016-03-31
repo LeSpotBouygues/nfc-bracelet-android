@@ -15,8 +15,8 @@
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/companionName"
-        android:layout_gravity="center_vertical"
-        android:gravity="center" />
+        android:gravity="center_vertical"
+        android:paddingStart="10dp" />
 
     <ImageView
         android:layout_width="wrap_content"

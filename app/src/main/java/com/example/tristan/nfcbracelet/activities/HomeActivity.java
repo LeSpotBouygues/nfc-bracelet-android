@@ -73,7 +73,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // debug database - to comment
-        debugDB();
+        //debugDB();
 
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
@@ -138,8 +138,8 @@ public class HomeActivity extends AppCompatActivity
                 historyDB.open();
                 if (historyDB.getHistoryByCompanionIdByTaskIdByDate(companion.getUserId(), task.getTaskId(), date) == null)
                     historyDB.insertHistory(history);
-                else
-                    historyDB.updateHistory(history, mData.getTeam());
+                /*else
+                    historyDB.updateHistory(history, mData.getTeam());*/
                 historyDB.close();
             }
         }

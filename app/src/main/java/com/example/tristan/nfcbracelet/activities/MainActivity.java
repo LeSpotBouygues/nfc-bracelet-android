@@ -182,6 +182,19 @@ public class MainActivity extends Activity {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             new NdefReaderTask().execute(tag);
         }
+
+        byte[] tagId = getIntent().getByteArrayExtra(NfcAdapter.EXTRA_ID);
+        if (tagId != null) {
+            String hexdump = new String();
+            for (int i = 0; i < tagId.length; i++) {
+                String x = Integer.toHexString(((int) tagId[i] & 0xff));
+                if (x.length() == 1) {
+                    x = '0' + x;
+                }
+                hexdump += x + ' ';
+            }
+            Log.d(TAG, hexdump);
+        }
     }
 
     private void goToProfile() {

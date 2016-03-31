@@ -68,18 +68,18 @@ public class TaskFragment extends Fragment {
             public void onClick(View v) {
                 if (startAllTasksButton.getText() == "START") {
                     startAllTasksButton.setText("STOP");
-                    for (int i=0; i < listView.getCount(); i++) {
+                    /*for (int i=0; i < listView.getCount(); i++) {
                         View view = listView.getChildAt(i);
                         ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.green_dot);
                         ((Button)view.findViewById(R.id.startTaskCompanion)).setText("STOP");
-                    }
+                    }*/
                 } else if (startAllTasksButton.getText() == "STOP") {
                     startAllTasksButton.setText("START");
-                    for (int i=0; i < listView.getCount(); i++) {
+                    /*for (int i=0; i < listView.getCount(); i++) {
                         View view = listView.getChildAt(i);
                         ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.reddot);
                         ((Button)view.findViewById(R.id.startTaskCompanion)).setText("START");
-                    }
+                    }*/
                 }
             }
         });

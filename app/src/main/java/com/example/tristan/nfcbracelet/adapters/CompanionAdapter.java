@@ -1,5 +1,6 @@
 package com.example.tristan.nfcbracelet.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.activities.CompanionActivity;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.gc.materialdesign.views.ButtonFlat;
 
 import java.util.ArrayList;
 
@@ -62,7 +64,29 @@ public class CompanionAdapter extends ArrayAdapter<Companion> {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                remove(companion);
+                final Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.dialog_remove_companion);
+
+                ButtonFlat okButton = (ButtonFlat) dialog.findViewById(R.id.remove);
+                // if button is clicked, close the custom dialog
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        remove(companion);
+                        dialog.dismiss();
+                    }
+                });
+
+                ButtonFlat dialogButtonCancel = (ButtonFlat) dialog.findViewById(R.id.cancel);
+                // if button is clicked, close the custom dialog
+                dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
             }
         });
 
