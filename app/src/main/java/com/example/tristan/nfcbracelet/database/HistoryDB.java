@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.tristan.nfcbracelet.models.History;
 import com.example.tristan.nfcbracelet.models.Task;
 import com.example.tristan.nfcbracelet.models.Team;
+import com.example.tristan.nfcbracelet.utils.Date;
 
 import java.util.ArrayList;
 
@@ -118,6 +119,18 @@ public class HistoryDB {
         history.setStartedInt(c.getInt(NUM_COL_STARTED));
 
         return history;
+    }
+
+    public void updateSingleHistory(History history) {
+        ContentValues values = new ContentValues();
+        //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
+        String companionId = history.getCompanion().getUserId();
+        String taskId = history.getTask().getTaskId();
+        values.put(COL_DURATION, history.getDuration());
+        values.put(COL_DATE, history.getDate());
+        values.put(COL_LAST_START, history.getLastStart());
+        values.put(COL_STARTED, history.isStartedInt());
+        db.update(TABLE_HISTORY, values, COL_TASK_ID + " LIKE \"" + taskId + "\" AND " + COL_COMPANION_ID + " LIKE \"" + companionId + "\"", null);
     }
 
     public ArrayList<History> getAllHistoryByCompanionId(String companionId) {

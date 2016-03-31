@@ -23,8 +23,15 @@ import android.widget.TimePicker;
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.adapters.CompanionAdapter;
 import com.example.tristan.nfcbracelet.adapters.TaskAdapter;
+import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.models.Companion;
 import com.example.tristan.nfcbracelet.models.Data;
+import com.example.tristan.nfcbracelet.models.History;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class CompanionActivity extends AppCompatActivity {
 
@@ -34,6 +41,7 @@ public class CompanionActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private ListView listView;
     private Companion companion;
+    private ArrayList<History> historyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +59,13 @@ public class CompanionActivity extends AppCompatActivity {
         companion = mData.getTeam().getCompanionByUserId(companion_id);
         Log.d(TAG, companion.getFirstName());
 
-        adapter = new TaskAdapter(this, mData.getTeam().getTasks());
+        // TODO get only today history
+        final HistoryDB historyDB = new HistoryDB(this);
+        historyDB.open();
+        historyList = historyDB.getAllHistoryByCompanionId(companion_id);
+        historyDB.close();
+
+        adapter = new TaskAdapter(this, mData.getTeam().getTasks(), historyList);
         // Attach the adapter to a ListView
         listView = (ListView) findViewById(R.id.tasksList);
         listView.setAdapter(adapter);
@@ -60,6 +74,17 @@ public class CompanionActivity extends AppCompatActivity {
         companionName.setText(companion.getLastName() + " " + companion.getFirstName());
         TextView jobName = (TextView) findViewById(R.id.jobName);
         jobName.setText(companion.getPosition());
+
+        // debug history table
+        Button debugHistory = (Button) findViewById(R.id.debugHistory);
+        debugHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                historyDB.open();
+                historyDB.displayTable();
+                historyDB.close();
+            }
+        });
     }
 
 }

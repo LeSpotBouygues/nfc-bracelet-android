@@ -30,7 +30,6 @@ public class Date {
         if (month < 10)
             date += "0";
         date += Integer.toString(month) + ":" + calendar.get(Calendar.YEAR);
-        Log.d(TAG, date);
         return date;
     }
 
@@ -49,7 +48,6 @@ public class Date {
         if (seconds < 10)
             time += "0";
         time += Integer.toString(seconds);
-        Log.d(TAG, time);
         return time;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.tristan.nfcbracelet.models;
 
+import com.example.tristan.nfcbracelet.database.HistoryDB;
+
 /**
  * Created by Tristan on 24/03/2016.
  */
