@@ -63,6 +63,7 @@ public class HistoryDB {
     }
 
     public long insertHistory(History history){
+        Log.d(TAG, "INSERT");
         //Création d'un ContentValues (fonctionne comme une HashMap)
         ContentValues values = new ContentValues();
         //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
@@ -78,6 +79,7 @@ public class HistoryDB {
     }
 
     public void updateHistory(History history, Team team) {
+        Log.d(TAG, "UPDATE");
         int size = team.getNumberOfTasks();
         for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
@@ -96,7 +98,7 @@ public class HistoryDB {
     }
 
     public History getHistoryByCompanionIdByTaskIdByDate(String companionId, String taskId, String date) {
-        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED}, COL_COMPANION_ID + " LIKE \"" + taskId +"\" AND " + COL_TASK_ID + " LIKE \"" + companionId +"\" AND " + COL_DATE + " LIKE \"" + date + "\"", null, null, null, null);
+        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED}, COL_COMPANION_ID + " LIKE \"" + companionId +"\" AND " + COL_TASK_ID + " LIKE \"" + taskId +"\" AND " + COL_DATE + " LIKE \"" + date + "\"", null, null, null, null);
         if (c.getCount() == 0)
             return null;
 
