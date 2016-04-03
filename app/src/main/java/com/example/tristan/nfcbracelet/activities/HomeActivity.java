@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.CompanionTasksDB;
 import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.database.TaskDB;
 import com.example.tristan.nfcbracelet.database.TeamCompanionDB;
@@ -73,7 +74,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // debug database - to comment
-        //debugDB();
+        debugDB();
 
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
@@ -149,6 +150,8 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void debugDB() {
+
+        // debug companions
         Log.d("DB RESULTS", "=== COMPANIONS ===");
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
@@ -157,6 +160,8 @@ public class HomeActivity extends AppCompatActivity
         for (Companion companion : results) {
             Log.d("DB RESULTS", companion.getFirstName());
         }
+
+        // debug teams
         Log.d("DB RESULTS", "=== TEAMS ===");
         TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
         teamCompanionDB.open();
@@ -170,6 +175,8 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("DB RESULTS", "    " + companion.getFirstName());
             }
         }
+
+        // debug tasks
         Log.d("DB RESULTS", "=== TASKS ===");
         TaskDB taskDB = new TaskDB(this);
         taskDB.open();
@@ -190,6 +197,12 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("DB RESULTS", "    " + task.getLongName());
             }
         }
+
+        // debug companion tasks
+        CompanionTasksDB companionTasksDB = new CompanionTasksDB(this);
+        companionTasksDB.open();
+        companionTasksDB.displayTable();
+        companionTasksDB.close();
     }
 
     @Override

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
+import com.example.tristan.nfcbracelet.database.CompanionTasksDB;
 import com.example.tristan.nfcbracelet.database.TaskDB;
 import com.example.tristan.nfcbracelet.database.TeamCompanionDB;
 import com.example.tristan.nfcbracelet.database.TeamTaskDB;
@@ -205,8 +206,10 @@ public class MainActivity extends Activity {
     }
 
     private void fillDatabase() {
-        getCompanionsFromServer();
+        getTasksFromServer();
     }
+
+    // GET DATA FROM SERVER
 
     private void getTasksFromServer() {
 
@@ -228,7 +231,7 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET TASKS", responseString);
                     fillTasksInDB(responseString);
-                    getTeamsFromServer();
+                    getCompanionsFromServer();
                 }
             }
         });
@@ -254,7 +257,7 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET COMPANIONS", responseString);
                     fillCompanionsInDB(responseString);
-                    getTasksFromServer();
+                    getTeamsFromServer();
                 }
             }
         });
@@ -280,35 +283,15 @@ public class MainActivity extends Activity {
                     String responseString = response.body().string();
                     Log.d("GET TEAMS", responseString);
                     fillTeamsInDB(responseString);
-                    //initHistoryTable();
                 }
             }
         });
     }
 
-    /*private void initHistoryTable() {
-        try {
-            HistoryDB historyDB = new HistoryDB(this);
-
-            for (int i=0; i < jsonResponse.length(); i++) {
-                JSONObject jsonObject = jsonResponse.getJSONObject(i);
-                Task task = new Task();
-                task.setTaskId(jsonObject.getString("_id"));
-                task.setShortName(jsonObject.getString("label_short"));
-                task.setLongName(jsonObject.getString("label_long"));
-
-                taskDB.open();
-                taskDB.insertTask(task);
-                taskDB.close();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        // Toast.makeText(this, "Companions updated", Toast.LENGTH_SHORT).show();
-    }*/
+    // FILL LOCAL DB WITH SERVER DATA
 
     private void fillTasksInDB(String response) {
+
         try {
             JSONArray jsonResponse = new JSONArray(response);
             TaskDB taskDB = new TaskDB(this);
@@ -328,7 +311,6 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // Toast.makeText(this, "Companions updated", Toast.LENGTH_SHORT).show();
     }
 
     private void fillCompanionsInDB(String response) {
@@ -352,6 +334,20 @@ public class MainActivity extends Activity {
                     companion.setBraceletId("");
                 //companion.setAliasName(jsonObject.getString("aliasName"));
                 //companion.setChief(jsonObject.getBoolean("chief"));
+                CompanionTasksDB companionTasksDB = new CompanionTasksDB(this);
+                TaskDB taskDB = new TaskDB(this);
+                JSONArray tasks = jsonObject.getJSONArray("tasksInProgress");
+                for (int k=0; k < tasks.length(); k++) {
+                    taskDB.open();
+                    Task task = taskDB.getTaskByTaskId(tasks.getString(k));
+                    taskDB.close();
+                    companionTasksDB.open();
+                    if (companionTasksDB.getSingleTaskByCompanionId(companion.getUserId(), task.getTaskId()) == null)
+                        companionTasksDB.insertTaskForCompanion(companion, task);
+                    else
+                        companionTasksDB.updateTaskForCompanion(companion, task);
+                    taskDB.close();
+                }
 
                 companionDB.open();
                 if (companionDB.getCompanionByUserId(companion.getUserId()) == null)
@@ -364,7 +360,6 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       // Toast.makeText(this, "Companions updated", Toast.LENGTH_SHORT).show();
     }
 
     void fillTeamsInDB(String response) {
@@ -424,8 +419,6 @@ public class MainActivity extends Activity {
                 spinner.setVisibility(View.GONE);
             }
         });
-
-        //Toast.makeText(this, "Teams updated", Toast.LENGTH_SHORT).show();
     }
 
     private class NdefReaderTask extends AsyncTask<Tag, Void, String> {

@@ -45,6 +45,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TASKS_COL_SHORT_NAME = "short_name";
     private static final String TASKS_COL_LONG_NAME = "long_name";
 
+    private static final String TABLE_COMPANION_TASKS = "companion_tasks_table";
+    private static final String COMPANION_TASKS_COL_ID = "id";
+    private static final String COMPANION_TASKS_COL_COMPANION_ID = "companion_id";
+    private static final String COMPANION_TASKS_COL_TASK_ID = "task_id";
+
     private static final String TABLE_HISTORY = "history_table";
     private static final String HISTORY_COL_ID = "id";
     private static final String HISTORY_COL_COMPANION_ID = "companion_id";
@@ -80,6 +85,11 @@ public class DBHelper extends SQLiteOpenHelper {
             + TASKS_COL_SHORT_NAME + " TEXT NOT NULL, "
             + TASKS_COL_LONG_NAME + " TEXT NOT NULL);";
 
+    private static final String CREATE_TABLE_COMPANION_TASKS = "CREATE TABLE IF NOT EXISTS " + TABLE_COMPANION_TASKS + " ("
+            + COMPANION_TASKS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COMPANION_TASKS_COL_COMPANION_ID + " TEXT NOT NULL, "
+            + COMPANION_TASKS_COL_TASK_ID + " TEXT NOT NULL);";
+
     private static final String CREATE_TABLE_HISTORY = "CREATE TABLE IF NOT EXISTS " + TABLE_HISTORY + " ("
             + HISTORY_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + HISTORY_COL_COMPANION_ID + " TEXT NOT NULL, "
@@ -100,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TEAMS_COMPANIONS);
         db.execSQL(CREATE_TABLE_TEAMS_TASKS);
         db.execSQL(CREATE_TABLE_TASKS);
+        db.execSQL(CREATE_TABLE_COMPANION_TASKS);
         db.execSQL(CREATE_TABLE_HISTORY);
     }
 
@@ -111,6 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS_COMPANIONS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS_TASKS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPANION_TASKS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY + ";");
         onCreate(db);
     }
