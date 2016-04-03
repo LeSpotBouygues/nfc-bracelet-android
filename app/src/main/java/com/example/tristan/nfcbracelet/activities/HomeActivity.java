@@ -78,9 +78,8 @@ public class HomeActivity extends AppCompatActivity
 
         CompanionDB companionDB = new CompanionDB(this);
         companionDB.open();
-        //mUser = companionDB.getCompanionByBraceletId("");
-        //82a1b0e4
-        // temporary
+        // temporary 
+        //mUser = companionDB.getCompanionByBraceletId("82a1b0e4");
         mUser = companionDB.getCompanionByUserId("56ea7f5bdf04853d33736c16");
         companionDB.close();
 

@@ -328,12 +328,12 @@ public class MainActivity extends Activity {
                     companion.setPosition(jsonObject.getString("position"));
                 else
                     companion.setPosition("");
-                if (jsonObject.has("bracelet_id"))
-                    companion.setBraceletId(jsonObject.getString("bracelet_id"));
+                if (jsonObject.has("idBracelet"))
+                    companion.setBraceletId(jsonObject.getString("idBracelet"));
                 else
                     companion.setBraceletId("");
+                companion.setChief(jsonObject.getBoolean("chief"));
                 //companion.setAliasName(jsonObject.getString("aliasName"));
-                //companion.setChief(jsonObject.getBoolean("chief"));
                 CompanionTasksDB companionTasksDB = new CompanionTasksDB(this);
                 TaskDB taskDB = new TaskDB(this);
                 JSONArray tasks = jsonObject.getJSONArray("tasksInProgress");
