@@ -9,4 +9,9 @@
     tools:showIn="@layout/app_bar_home"
     android:id="@+id/frame_container">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container"></LinearLayout>
 </RelativeLayout>

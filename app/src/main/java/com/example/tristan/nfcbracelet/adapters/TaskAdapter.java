@@ -40,29 +40,35 @@ import java.util.ArrayList;
 public class TaskAdapter extends ArrayAdapter<Task> {
     private static final String TAG = "TaskAdapter";
 
-    private ArrayList<History> mHistoryList;
     private HistoryDB historyDB;
+    private Companion mCompanion;
 
-    public TaskAdapter(Context context, ArrayList<Task> tasks, ArrayList<History> historyList) {
+    public TaskAdapter(Context context, ArrayList<Task> tasks, Companion companion) {
         super(context, 0, tasks);
 
-        mHistoryList = historyList;
         historyDB = new HistoryDB(context);
+        mCompanion = companion;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         final Task task = getItem(position);
-        History historySave = null;
-        for (History historyIter : mHistoryList) {
-            if (task.getTaskId().equals(historyIter.getTask().getTaskId())) {
-                historySave = historyIter;
-            }
-        }
-        final History history = historySave;
+
         final String date = DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString();
         final String time = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+
+        historyDB.open();
+        final History history = historyDB.getHistoryByCompanionIdByTaskIdByDate(mCompanion.getUserId(), task.getTaskId(), date);
+        historyDB.close();
+
+        /*Log.d(TAG, "HISTORY");
+        Log.d(TAG, "companion_id="+history.getCompanion().getUserId()
+                +", task_name="+history.getTask().getLongName()
+                +", duration="+history.getDuration()
+                +", date="+history.getDate()
+                +", started="+(history.isStarted() ? "1" : "0")
+                +", last_start="+history.getLastStart());*/
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
@@ -78,20 +84,49 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         // Populate the data into the template view using the data object
         taskName.setText(task.getLongName());
         startTaskButton.setText("START");
+
         if (history.isStarted()) {
-            Log.d(TAG, "HISTORY STARTED");
+            //Log.d(TAG, "HISTORY STARTED");
             startTaskButton.setText("STOP");
             light.setImageResource(R.mipmap.green_dot);
+
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 java.util.Date lastStart = sdf.parse(history.getLastStart());
-                chronometer.setBase(SystemClock.elapsedRealtime() - (Integer.parseInt(history.getDuration()) * 60000));
-                chronometer.start();
+                long lastStartLong = lastStart.getTime();
+                //Log.d(TAG, "lastStartLong = " + String.valueOf(lastStartLong));
+                String now = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+                long nowLong = sdf.parse(now).getTime();
+                //Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
+                //Log.d(TAG, "elapsedRealtime = " + String.valueOf(SystemClock.elapsedRealtime()));
+                long chronoValue = SystemClock.elapsedRealtime() - (nowLong - lastStartLong + Integer.parseInt(history.getDuration()) * 60000);
+                chronometer.setBase(chronoValue);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
+
+            chronometer.start();
+
         } else {
-            Log.d(TAG, "HISTORY STOPPED");
+            //Log.d(TAG, "HISTORY STOPPED");
+
+            /*if (history.getLastStart() != null) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    java.util.Date lastStart = sdf.parse(history.getLastStart());
+                    long lastStartLong = lastStart.getTime();
+                    Log.d(TAG, "lastStartLong = " + String.valueOf(lastStartLong));
+                    String now = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+                    long nowLong = sdf.parse(now).getTime();
+                    Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
+                    Log.d(TAG, "elapsedRealtime = " + String.valueOf(SystemClock.elapsedRealtime()));
+                    long chronoValue = SystemClock.elapsedRealtime() - (nowLong - lastStartLong + Integer.parseInt(history.getDuration()) * 60000);
+                    chronometer.setBase(chronoValue);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }*/
         }
 
 
@@ -118,9 +153,11 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     long timeElapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
                     final int hours = (int) (timeElapsed / 3600000);
                     final int minutes = (int) (timeElapsed - hours * 3600000) / 60000;
-                    Log.d(TAG, "hours = " + Integer.toString(hours));
-                    Log.d(TAG, "minutes = " + Integer.toString(minutes));
-                    history.setDuration(Integer.toString(hours * 60 + minutes));
+                    //Log.d(TAG, "hours = " + Integer.toString(hours));
+                    //Log.d(TAG, "minutes = " + Integer.toString(minutes));
+                    String duration = Integer.toString((hours * 60 + minutes));
+                    //Log.d(TAG, "duration = "+duration);
+                    history.setDuration(duration);
                     historyDB.open();
                     historyDB.updateSingleHistory(history);
                     historyDB.close();
@@ -148,8 +185,8 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 long timeElapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
                 final int hours = (int) (timeElapsed / 3600000);
                 final int minutes = (int) (timeElapsed - hours * 3600000) / 60000;
-                Log.d(TAG, "hours = "+Integer.toString(hours));
-                Log.d(TAG, "minutes = "+Integer.toString(minutes));
+                //Log.d(TAG, "hours = "+Integer.toString(hours));
+                //Log.d(TAG, "minutes = "+Integer.toString(minutes));
 
                 final Dialog dialog = new Dialog(getContext());
                 dialog.setContentView(R.layout.dialog_date);
@@ -184,7 +221,9 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     @Override
                     public void onClick(View v) {
                         chronometer.setText(String.valueOf(sliderHours.getValue() + ":" + sliderMinutes.getValue()));
-                        history.setDuration(Integer.toString(sliderHours.getValue() * 60 + sliderMinutes.getValue()));
+                        String duration = Integer.toString(sliderHours.getValue() * 60 + sliderMinutes.getValue());
+                        Log.d(TAG, "duration = "+duration);
+                        history.setDuration(duration);
                         historyDB.open();
                         historyDB.updateSingleHistory(history);
                         historyDB.close();

@@ -25,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COMPANIONS_COL_LASTNAME = "lastname";
     private static final String COMPANIONS_COL_POSITION = "position";
     private static final String COMPANIONS_COL_BRACELET_ID = "bracelet_id";
+    private static final String COMPANIONS_COL_PRESENCE = "presence";
     private static final String COMPANIONS_COL_CHIEF = "chief";
 
     private static final String TABLE_TEAMS_COMPANIONS = "teams_companions_table";
@@ -44,6 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TASKS_COL_TASK_ID = "task_id";
     private static final String TASKS_COL_SHORT_NAME = "short_name";
     private static final String TASKS_COL_LONG_NAME = "long_name";
+    private static final String TASKS_COL_CODE = "code";
 
     private static final String TABLE_COMPANION_TASKS = "companion_tasks_table";
     private static final String COMPANION_TASKS_COL_ID = "id";
@@ -66,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + COMPANIONS_COL_LASTNAME + " TEXT NOT NULL, "
             + COMPANIONS_COL_POSITION + " TEXT NOT NULL, "
             + COMPANIONS_COL_BRACELET_ID + " TEXT NOT NULL, "
+            + COMPANIONS_COL_PRESENCE + " INTEGER, "
             + COMPANIONS_COL_CHIEF + " INTEGER);";
 
     private static final String CREATE_TABLE_TEAMS_COMPANIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS_COMPANIONS + " ("
@@ -84,7 +87,8 @@ public class DBHelper extends SQLiteOpenHelper {
             + TASKS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + TASKS_COL_TASK_ID + " TEXT NOT NULL, "
             + TASKS_COL_SHORT_NAME + " TEXT NOT NULL, "
-            + TASKS_COL_LONG_NAME + " TEXT NOT NULL);";
+            + TASKS_COL_LONG_NAME + " TEXT NOT NULL, "
+            + TASKS_COL_CODE + " TEXT NOT NULL);";
 
     private static final String CREATE_TABLE_COMPANION_TASKS = "CREATE TABLE IF NOT EXISTS " + TABLE_COMPANION_TASKS + " ("
             + COMPANION_TASKS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

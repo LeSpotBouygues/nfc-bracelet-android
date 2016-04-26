@@ -32,14 +32,19 @@ public class CompanionDB {
     private static final int NUM_COL_BRACELET_ID = 5;
     private static final String COL_CHIEF = "chief";
     private static final int NUM_COL_CHIEF = 6;
+    private static final String COL_PRESENCE = "presence";
+    private static final int NUM_COL_PRESENCE = 7;
 
     private SQLiteDatabase db;
 
     private DBHelper DBHelper;
 
+    private Context mContext;
+
     public CompanionDB(Context context){
         //On crée la BDD et sa table
         DBHelper = new DBHelper(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
     }
 
     public void open(){
@@ -65,6 +70,8 @@ public class CompanionDB {
         values.put(COL_LASTNAME, companion.getLastName());
         values.put(COL_POSITION, companion.getPosition());
         values.put(COL_BRACELET_ID, companion.getBraceletId());
+        values.put(COL_CHIEF, companion.getChiefInt());
+        values.put(COL_PRESENCE, companion.getPresenceInt());
 
         //on insère l'objet dans la BDD via le ContentValues
         return db.insert(TABLE_COMPANIONS, null, values);
@@ -78,6 +85,8 @@ public class CompanionDB {
         values.put(COL_LASTNAME, companion.getLastName());
         values.put(COL_POSITION, companion.getPosition());
         values.put(COL_BRACELET_ID, companion.getBraceletId());
+        values.put(COL_CHIEF, companion.getChiefInt());
+        values.put(COL_PRESENCE, companion.getPresenceInt());
         return db.update(TABLE_COMPANIONS, values, COL_USER_ID  + " LIKE \"" + userId +"\"", null);
     }
 
@@ -88,19 +97,19 @@ public class CompanionDB {
 
     public Companion getCompanionByBraceletId(String braceletId){
         //Récupère dans un Cursor les valeurs correspondant à un livre contenu dans la BDD (ici on sélectionne le livre grâce à son titre)
-        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID}, COL_BRACELET_ID + " LIKE \"" + braceletId +"\"", null, null, null, null);
+        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID, COL_CHIEF, COL_PRESENCE}, COL_BRACELET_ID + " LIKE \"" + braceletId +"\"", null, null, null, null);
         return cursorToCompanion(c);
     }
 
     public Companion getCompanionByUserId(String userId) {
-        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID}, COL_USER_ID + " LIKE \"" + userId +"\"", null, null, null, null);
+        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID, COL_CHIEF, COL_PRESENCE}, COL_USER_ID + " LIKE \"" + userId +"\"", null, null, null, null);
         return cursorToCompanion(c);
     }
 
     public ArrayList<Companion> getAllCompanions() {
         ArrayList<Companion> companions = new ArrayList<>();
 
-        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID}, null, null, null, null, null);
+        Cursor c = db.query(TABLE_COMPANIONS, new String[] {COL_ID, COL_USER_ID, COL_FIRSTNAME, COL_LASTNAME, COL_POSITION, COL_BRACELET_ID, COL_CHIEF, COL_PRESENCE}, null, null, null, null, null);
         if (c.getCount() == 0)
             return null;
 
@@ -114,6 +123,8 @@ public class CompanionDB {
             companion.setLastName(c.getString(NUM_COL_LASTNAME));
             companion.setPosition(c.getString(NUM_COL_POSITION));
             companion.setBraceletId(c.getString(NUM_COL_BRACELET_ID));
+            companion.setChiefInt(c.getInt(NUM_COL_CHIEF));
+            companion.setPresenceInt(c.getInt(NUM_COL_PRESENCE));
             companions.add(companion);
             c.moveToNext();
         }
@@ -139,9 +150,16 @@ public class CompanionDB {
         companion.setLastName(c.getString(NUM_COL_LASTNAME));
         companion.setPosition(c.getString(NUM_COL_POSITION));
         companion.setBraceletId(c.getString(NUM_COL_BRACELET_ID));
+        companion.setChiefInt(c.getInt(NUM_COL_CHIEF));
+        companion.setPresenceInt(c.getInt(NUM_COL_PRESENCE));
 
         //On ferme le cursor
         c.close();
+
+        CompanionTasksDB companionTasksDB = new CompanionTasksDB(mContext);
+        companionTasksDB.open();
+        companion.setTasksInProgress(companionTasksDB.getTasksByCompanion(companion));
+        companionTasksDB.close();
 
         //On retourne le livre
         return companion;

@@ -18,6 +18,7 @@ import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.activities.CompanionActivity;
 import com.example.tristan.nfcbracelet.database.CompanionDB;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.Data;
 import com.gc.materialdesign.views.ButtonFlat;
 
 import java.util.ArrayList;
@@ -43,9 +44,23 @@ public class CompanionAdapter extends ArrayAdapter<Companion> {
         // Lookup view for data population
         final TextView companionName = (TextView) convertView.findViewById(R.id.companionName);
         final CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.deleteButton);
 
         // Populate the data into the template view using the data object
+        if (companion.isPresent())
+            checkBox.setChecked(true);
+        else
+            checkBox.setChecked(false);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    Data.getInstance().getTeam().getCompanionByUserId(companion.getUserId()).setPresence(true);
+                }
+                else {
+                    Data.getInstance().getTeam().getCompanionByUserId(companion.getUserId()).setPresence(false);
+                }
+            }
+        });
         companionName.setText(companion.getLastName() + " " + companion.getFirstName());
         companionName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,35 +76,6 @@ public class CompanionAdapter extends ArrayAdapter<Companion> {
                 }
             }
         });
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.dialog_remove_companion);
-
-                ButtonFlat okButton = (ButtonFlat) dialog.findViewById(R.id.remove);
-                // if button is clicked, close the custom dialog
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        remove(companion);
-                        dialog.dismiss();
-                    }
-                });
-
-                ButtonFlat dialogButtonCancel = (ButtonFlat) dialog.findViewById(R.id.cancel);
-                // if button is clicked, close the custom dialog
-                dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
-            }
-        });
-
 
         // Return the completed view to render on screen
         return convertView;

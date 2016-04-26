@@ -3,6 +3,9 @@ package com.example.tristan.nfcbracelet.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +18,14 @@ import android.widget.Toast;
 
 import com.example.tristan.nfcbracelet.R;
 import com.example.tristan.nfcbracelet.activities.CompanionActivity;
+import com.example.tristan.nfcbracelet.database.HistoryDB;
 import com.example.tristan.nfcbracelet.models.Companion;
+import com.example.tristan.nfcbracelet.models.History;
+import com.example.tristan.nfcbracelet.models.Task;
+import com.example.tristan.nfcbracelet.utils.Date;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -25,9 +34,15 @@ import java.util.ArrayList;
 public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
 
     private static final String TAG = "TaskCompanionAdapter";
+    private Context mContext;
+    private Task mTask;
 
-    public TaskCompanionAdapter(Context context, ArrayList<Companion> companions) {
+
+    public TaskCompanionAdapter(Context context, ArrayList<Companion> companions, Task task) {
         super(context, 0, companions);
+
+        mContext = context;
+        mTask = task;
     }
 
     @Override
@@ -38,11 +53,26 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_task_companion, parent, false);
         }
+
+        final String date = DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString();
+        final String time = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+
+        final HistoryDB historyDB = new HistoryDB(mContext);
+        historyDB.open();
+        final History history = historyDB.getHistoryByCompanionIdByTaskIdByDate(companion.getUserId(), mTask.getTaskId(), date);
+        historyDB.close();
+
         // Lookup view for data population
         final ImageView light = (ImageView) convertView.findViewById(R.id.taskCompanionLight);
         final TextView companionName = (TextView) convertView.findViewById(R.id.taskCompanion);
         final Button startTaskButton = (Button) convertView.findViewById(R.id.startTaskCompanion);
         startTaskButton.setText("START");
+
+        if (history.isStarted()) {
+            Log.d(TAG, "HISTORY STARTED");
+            startTaskButton.setText("STOP");
+            light.setImageResource(R.mipmap.green_dot);
+        }
 
         // Populate the data into the template view using the data object
         companionName.setText(companion.getLastName() + " " + companion.getFirstName());
@@ -68,10 +98,36 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
                 if (startTaskButton.getText() == "START") {
                     startTaskButton.setText("STOP");
                     light.setImageResource(R.mipmap.green_dot);
+                    history.setStarted(true);
+                    history.setLastStart(time);
+                    history.setDate(date);
+                    historyDB.open();
+                    historyDB.updateSingleHistory(history);
+                    historyDB.close();
                 }
                 else if (startTaskButton.getText() == "STOP") {
                     startTaskButton.setText("START");
                     light.setImageResource(R.mipmap.reddot);
+                    history.setStarted(false);
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                        java.util.Date lastStart = sdf.parse(history.getLastStart());
+                        Log.d(TAG, "lastStart = "+history.getLastStart());
+                        long lastStartLong = lastStart.getTime();
+                        Log.d(TAG, "lastStartLong = " + String.valueOf(lastStartLong));
+                        String now = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+                        long nowLong = sdf.parse(now).getTime();
+                        Log.d(TAG, "now = " + sdf.parse(now));
+                        Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
+                        String duration = Long.toString((nowLong - lastStartLong)/60000 + Integer.parseInt(history.getDuration()));
+                        Log.d(TAG, "duration = "+duration);
+                        history.setDuration(duration);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    historyDB.open();
+                    historyDB.updateSingleHistory(history);
+                    historyDB.close();
                 }
             }
         });

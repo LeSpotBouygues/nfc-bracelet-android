@@ -31,4 +31,5 @@ public class Data {
     public Team getTeam() {
         return mTeam;
     }
+
 }

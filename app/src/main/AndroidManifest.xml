@@ -28,7 +28,13 @@
         <activity
             android:name=".activities.CompanionActivity"
             android:label="@string/title_activity_companion"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.HomeActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.HomeActivity" />
+        </activity>
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
@@ -43,6 +49,13 @@
                 <action android:name="android.nfc.action.TAG_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".nfc.TagViewer"
+            android:label="@string/app_name"
+            android:screenOrientation="nosensor"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleInstance">
         </activity>
     </application>
 

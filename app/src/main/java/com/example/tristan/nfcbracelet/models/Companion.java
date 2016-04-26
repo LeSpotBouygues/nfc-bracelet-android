@@ -1,11 +1,14 @@
 package com.example.tristan.nfcbracelet.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
  * Created by Tristan on 18/03/2016.
  */
 public class Companion {
+    private static final String TAG = "Companion";
 
     private int id;
     private String userId;
@@ -15,6 +18,7 @@ public class Companion {
     private String position;
     //private Array<String> tasksInProgress;
     private boolean chief;
+    private boolean presence;
     private String braceletId;
 
     private ArrayList<Task> tasksInProgress;
@@ -93,5 +97,51 @@ public class Companion {
 
     public void setChief(boolean chief) {
         this.chief = chief;
+    }
+
+    public int getChiefInt() {
+        if (chief)
+            return 1;
+        return 0;
+    }
+
+    public void setChiefInt(int chiefInt) {
+        if (chiefInt == 1) {
+            chief = true;
+        }
+        else {
+            chief = false;
+        }
+    }
+
+    public boolean isPresent() {
+        return presence;
+    }
+
+    public void setPresence(boolean presence) {
+        this.presence = presence;
+    }
+
+    public int getPresenceInt() {
+        if (presence)
+            return 1;
+        return 0;
+    }
+
+    public void setPresenceInt(int presenceInt) {
+        if (presenceInt == 1) {
+            presence = true;
+        }
+        else {
+            presence = false;
+        }
+
+    }
+
+    public void displayTasks() {
+        Log.d(TAG, firstName +", tasks : ");
+        for (Task task : tasksInProgress) {
+            Log.d(TAG, task.getLongName());
+        }
     }
 }

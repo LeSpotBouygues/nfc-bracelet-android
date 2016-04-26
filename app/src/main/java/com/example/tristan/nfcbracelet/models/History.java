@@ -79,6 +79,7 @@ public class History {
     public void setStartedInt(int started) {
         if (started == 1)
             isStarted = true;
-        isStarted = false;
+        else
+            isStarted = false;
     }
 }

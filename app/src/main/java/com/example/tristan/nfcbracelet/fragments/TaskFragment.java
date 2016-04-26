@@ -49,17 +49,21 @@ public class TaskFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle bundle = getArguments();
+        task = mData.getTeam().getTaskByTaskId(bundle.getString("taskId"));
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_task, container, false);
-        adapter = new TaskCompanionAdapter(getContext(), mData.getTeam().getCompanions());
+        adapter = new TaskCompanionAdapter(getContext(), mData.getTeam().getCompanions(), task);
         // Attach the adapter to a ListView
         listView = (ListView) rootView.findViewById(R.id.taskCompanionsList);
         listView.setAdapter(adapter);
 
         TextView taskName = (TextView) rootView.findViewById(R.id.taskName);
-        Bundle bundle = getArguments();
-        task = mData.getTeam().getTaskByTaskId(bundle.getString("taskId"));
         taskName.setText(task.getLongName());
+        TextView taskCode = (TextView) rootView.findViewById(R.id.taskCode);
+        taskCode.setText(task.getCode());
 
         final Button startAllTasksButton = (Button) rootView.findViewById(R.id.startAllTasks);
         startAllTasksButton.setText("START");
@@ -68,18 +72,22 @@ public class TaskFragment extends Fragment {
             public void onClick(View v) {
                 if (startAllTasksButton.getText() == "START") {
                     startAllTasksButton.setText("STOP");
-                    /*for (int i=0; i < listView.getCount(); i++) {
+                    for (int i = 0; i < listView.getCount(); i++) {
                         View view = listView.getChildAt(i);
-                        ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.green_dot);
-                        ((Button)view.findViewById(R.id.startTaskCompanion)).setText("STOP");
-                    }*/
+                        if (view != null) {
+                            ((ImageView) view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.green_dot);
+                            ((Button) view.findViewById(R.id.startTaskCompanion)).setText("STOP");
+                        }
+                    }
                 } else if (startAllTasksButton.getText() == "STOP") {
                     startAllTasksButton.setText("START");
-                    /*for (int i=0; i < listView.getCount(); i++) {
+                    for (int i = 0; i < listView.getCount(); i++) {
                         View view = listView.getChildAt(i);
-                        ((ImageView)view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.reddot);
-                        ((Button)view.findViewById(R.id.startTaskCompanion)).setText("START");
-                    }*/
+                        if (view != null) {
+                            ((ImageView) view.findViewById(R.id.taskCompanionLight)).setImageResource(R.mipmap.reddot);
+                            ((Button) view.findViewById(R.id.startTaskCompanion)).setText("START");
+                        }
+                    }
                 }
             }
         });

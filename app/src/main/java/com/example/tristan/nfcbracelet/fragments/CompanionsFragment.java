@@ -61,4 +61,8 @@ public class CompanionsFragment extends Fragment {
 
         return rootView;
     }
+
+    public CompanionAdapter getAdapter() {
+        return adapter;
+    }
 }

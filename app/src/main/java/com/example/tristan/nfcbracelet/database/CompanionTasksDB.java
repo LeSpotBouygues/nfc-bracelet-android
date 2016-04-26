@@ -61,7 +61,7 @@ public class CompanionTasksDB {
 
     public void insertTaskForCompanion(Companion companion, Task task){
 
-        Log.d(TAG, "insert task "+task.getTaskId()+" for companion "+companion.getUserId());
+        //Log.d(TAG, "insert task "+task.getTaskId()+" for companion "+companion.getUserId());
             //Création d'un ContentValues (fonctionne comme une HashMap)
             ContentValues values = new ContentValues();
             //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
@@ -72,12 +72,16 @@ public class CompanionTasksDB {
 
     public void updateTaskForCompanion(Companion companion, Task task){
 
-        Log.d(TAG, "update task "+task.getTaskId()+" for companion "+companion.getUserId());
+        //Log.d(TAG, "update task "+task.getTaskId()+" for companion "+companion.getUserId());
         ContentValues values = new ContentValues();
         //on lui ajoute une valeur associée à une clé (qui est le nom de la colonne dans laquelle on veut mettre la valeur)
         values.put(COL_COMPANION_ID, companion.getUserId());
         values.put(COL_TASK_ID, task.getTaskId());
         db.update(TABLE_COMPANION_TASKS, values, COL_COMPANION_ID + " LIKE \"" + companion.getUserId() + "\" AND " + COL_TASK_ID + " LIKE \"" + task.getTaskId() + "\"", null);
+    }
+
+    public void deleteAllTasksForCompanion(Companion companion) {
+        db.delete(TABLE_COMPANION_TASKS, COL_COMPANION_ID + " LIKE \"" + companion.getUserId() + "\"", null);
     }
 
     public Task getSingleTaskByCompanionId(String companionId, String taskId){
@@ -100,7 +104,7 @@ public class CompanionTasksDB {
             return;
         c.moveToFirst();
         for (int i = 0; i < c.getCount(); i++) {
-            Log.d(TAG, "id=" + c.getString(NUM_COL_ID) + ", companion_id=" + c.getString(NUM_COL_COMPANION_ID) +", task_id="+c.getString(NUM_COL_TASK_ID));
+            //Log.d(TAG, "id=" + c.getString(NUM_COL_ID) + ", companion_id=" + c.getString(NUM_COL_COMPANION_ID) +", task_id="+c.getString(NUM_COL_TASK_ID));
             c.moveToNext();
         }
     }
@@ -114,10 +118,10 @@ public class CompanionTasksDB {
 
         TaskDB taskDB = new TaskDB(mContext);
         c.moveToFirst();
-        Log.d(TAG, "number of tasks for companion "+companion.getUserId() +" = " + Integer.toString(c.getCount()));
+        //Log.d(TAG, "number of tasks for companion "+companion.getUserId() +" = " + Integer.toString(c.getCount()));
         for (int i=0; i < c.getCount(); i++) {
             taskDB.open();
-            Task task = taskDB.getTaskByTaskId(c.getString(NUM_COL_TASK_ID));
+            Task task = taskDB.getTaskByTaskId(c.getString(0));
             taskDB.close();
             if (task != null)
                 tasks.add(task);

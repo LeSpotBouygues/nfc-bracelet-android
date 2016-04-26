@@ -57,7 +57,7 @@ public class TeamTaskDB {
 
     public void insertTeam(Team team){
 
-        Log.d(TAG, "insert team " + team.getTeamId());
+        //Log.d(TAG, "insert team " + team.getTeamId());
         int size = team.getNumberOfTasks();
         for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
@@ -72,9 +72,8 @@ public class TeamTaskDB {
 
     public void updateTeam(Team team){
 
-        Log.d(TAG, "update team " + team.getTeamId());
+        //Log.d(TAG, "update team " + team.getTeamId());
         int size = team.getNumberOfTasks();
-        Log.d(TAG, "size = " + Integer.toString(size));
         for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
             ContentValues values = new ContentValues();
@@ -119,7 +118,7 @@ public class TeamTaskDB {
             return null;
 
         c.moveToFirst();
-        Log.d(TAG, "getAllTeams count = " + Integer.toString(c.getCount()));
+        //Log.d(TAG, "getAllTeams count = " + Integer.toString(c.getCount()));
         for (int i=0; i < c.getCount(); i++) {
             Team team = getTeamByTeamId(c.getString(0));
             if (team != null)

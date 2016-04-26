@@ -15,15 +15,28 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="70dp" >
+            android:layout_height="100dp" >
 
-            <TextView
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="RAT Armatures"
-                android:id="@+id/taskName"
-                android:gravity="center_horizontal" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="RAT Armatures"
+                    android:id="@+id/taskName"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/taskCode"
+                    android:gravity="center_horizontal" />
+            </LinearLayout>
 
             <Button
                 android:layout_width="60dp"
@@ -32,6 +45,7 @@
                 android:id="@+id/startAllTasks"
                 android:textSize="10dp"
                 android:layout_marginLeft="10dp" />
+
         </LinearLayout>
 
         <ListView

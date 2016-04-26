@@ -70,7 +70,7 @@ public class TasksFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString("taskId", tasks.get(i).getTaskId());
             taskFragment.setArguments(bundle);
-            adapter.addFragment(taskFragment, Integer.toString(i + 1));
+            adapter.addFragment(taskFragment, "Task "+Integer.toString(i + 1));
         }
         viewPager.setAdapter(adapter);
     }
