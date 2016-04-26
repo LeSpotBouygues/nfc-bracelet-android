@@ -3,9 +3,11 @@ package com.example.tristan.nfcbracelet.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -138,6 +140,12 @@ public class HomeActivity extends AppCompatActivity
         navChiefName.setText(Session.getInstance().getUser().getLastName() + " " + Session.getInstance().getUser().getFirstName());
         TextView navChiefPosition = (TextView) headerView.findViewById(R.id.navChiefPosition);
         navChiefPosition.setText(Session.getInstance().getUser().getPosition());
+        spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinnerHome);
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String lastSynchro = sharedPref.getString("synchro", "");
+        if (lastSynchro != null && lastSynchro.equals(android.text.format.DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString()))
+            Toast.makeText(this, "Warning : Last time data were sent was "+lastSynchro, Toast.LENGTH_LONG).show();
     }
 
     private void fillData() {
@@ -214,6 +222,7 @@ public class HomeActivity extends AppCompatActivity
                 history.setTask(task);
                 history.setStartedInt(0);
                 history.setLastStart(time);
+                history.setSentInt(0);
                 historyDB.open();
                 if (historyDB.getHistoryByCompanionIdByTaskIdByDate(companion.getUserId(), task.getTaskId(), date) == null)
                     historyDB.insertHistory(history);
@@ -616,6 +625,7 @@ public class HomeActivity extends AppCompatActivity
             Log.d(TAG, "checkBracelet end");
             new Handler().post(new Runnable() {
                 public void run() {
+                    spinner.setVisibility(View.GONE);
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, new CompanionsFragment())

@@ -13,5 +13,16 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/container"></LinearLayout>
+        android:id="@+id/container">
+
+        <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+            android:id="@+id/spinnerHome"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerHorizontal="true"
+            android:background="#1E88E5"
+            android:layout_marginTop="200dp"
+            android:layout_marginLeft="170dp" />
+
+    </LinearLayout>
 </RelativeLayout>

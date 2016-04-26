@@ -12,8 +12,8 @@
         android:layout_height="match_parent">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
             android:text="Send data"
             android:id="@+id/sendDataButton"
             android:layout_gravity="center_horizontal|top"
@@ -25,7 +25,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/sendButtonText"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:textSize="18dp" />
 
         <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
             android:id="@+id/spinner2"

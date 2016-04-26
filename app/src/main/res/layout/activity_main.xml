@@ -39,8 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Veuillez vous identifier à l&apos;aide d&apos;un bracelet"
-        android:id="@+id/textView20"
+        android:text="Loading data.. Please wait.."
+        android:id="@+id/textMessage"
         android:layout_marginTop="100dp"
         android:layout_below="@+id/textView19"
         android:layout_centerHorizontal="true" />
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
         android:src="@mipmap/ic_tap_and_play_black_48dp"
-        android:layout_alignBottom="@+id/textView20"
+        android:layout_alignBottom="@+id/textMessage"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="27dp" />
 
@@ -60,7 +60,7 @@
         android:layout_height="32dp"
         android:layout_centerHorizontal="true"
         android:background="#1E88E5"
-        android:layout_below="@+id/textView20"
+        android:layout_below="@+id/textMessage"
         android:layout_marginTop="40dp" />
 
 

@@ -1,6 +1,7 @@
 package com.example.tristan.nfcbracelet.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.Call;
@@ -137,10 +139,41 @@ public class SynchronizeDataFragment extends Fragment {
                         @Override
                         public void run() {
                             spinner.setVisibility(View.GONE);
-                            sendDataText.setText("Last synchronization : "
-                                    + DateFormat.format("dd:MM:yyyy", new Date()).toString()
+                            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            Calendar calendar = Calendar.getInstance();
+                            int day = calendar.get(Calendar.DAY_OF_WEEK);
+                            String dayOfWeek = "";
+                            switch (day) {
+                                case Calendar.SUNDAY:
+                                    dayOfWeek = "Sunday";
+
+                                case Calendar.MONDAY:
+                                    dayOfWeek = "Monday";
+
+                                case Calendar.TUESDAY:
+                                    dayOfWeek = "Tuesday";
+
+                                case Calendar.WEDNESDAY:
+                                    dayOfWeek = "Wednesday";
+
+                                case Calendar.THURSDAY:
+                                    dayOfWeek = "Thursday";
+
+                                case Calendar.FRIDAY:
+                                    dayOfWeek = "Friday";
+
+                                case Calendar.SATURDAY:
+                                    dayOfWeek = "Saturday";
+                            }
+                            String sendDataString = "Last synchronization : "
+                                    + dayOfWeek + " "
+                                    + android.text.format.DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString()
                                     + " at "
-                                    + DateFormat.format("HH:mm:ss", new Date()).toString());
+                                    + android.text.format.DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
+                            editor.putString("synchro", DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString());
+                            editor.commit();
+                            sendDataText.setText(sendDataString);
                         }
                     });
                     if (!response.isSuccessful()) {

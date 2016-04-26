@@ -13,6 +13,30 @@ public class History {
     private Task task;
     private String date;
     private String lastStart;
+    private boolean isSent;
+
+    public boolean isSent() {
+        return isSent;
+    }
+
+    public void setIsSent(boolean isSent) {
+        this.isSent = isSent;
+    }
+
+    public int getSentInt() {
+        if (isSent)
+            return 1;
+        return 0;
+    }
+
+    public void setSentInt(int sentInt) {
+        if (sentInt == 1) {
+            isSent = true;
+        }
+        else {
+            isSent = false;
+        }
+    }
 
     public int getId() {
         return id;

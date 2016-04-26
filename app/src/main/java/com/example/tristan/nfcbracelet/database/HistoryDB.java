@@ -37,6 +37,8 @@ public class HistoryDB {
     private static final int NUM_COL_LAST_START = 5;
     private static final String COL_STARTED = "started";
     private static final int NUM_COL_STARTED = 6;
+    private static final String COL_SENT = "sent";
+    private static final int NUM_COL_SENT = 7;
 
     private SQLiteDatabase db;
     private Context mContext;
@@ -74,6 +76,7 @@ public class HistoryDB {
         values.put(COL_DATE, history.getDate());
         values.put(COL_LAST_START, history.getLastStart());
         values.put(COL_STARTED, history.isStartedInt());
+        values.put(COL_SENT, history.getSentInt());
 
         //on insère l'objet dans la BDD via le ContentValues
         return db.insert(TABLE_HISTORY, null, values);
@@ -99,7 +102,7 @@ public class HistoryDB {
     }
 
     public History getHistoryByCompanionIdByTaskIdByDate(String companionId, String taskId, String date) {
-        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED}, COL_COMPANION_ID + " LIKE \"" + companionId +"\" AND " + COL_TASK_ID + " LIKE \"" + taskId +"\" AND " + COL_DATE + " LIKE \"" + date + "\"", null, null, null, null);
+        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED, COL_SENT}, COL_COMPANION_ID + " LIKE \"" + companionId +"\" AND " + COL_TASK_ID + " LIKE \"" + taskId +"\" AND " + COL_DATE + " LIKE \"" + date + "\"", null, null, null, null);
         if (c.getCount() == 0)
             return null;
 
@@ -117,6 +120,7 @@ public class HistoryDB {
         history.setDate(c.getString(NUM_COL_DATE));
         history.setLastStart(c.getString(NUM_COL_LAST_START));
         history.setStartedInt(c.getInt(NUM_COL_STARTED));
+        history.setSentInt(c.getInt(NUM_COL_SENT));
 
         return history;
     }
@@ -130,13 +134,14 @@ public class HistoryDB {
         values.put(COL_DATE, history.getDate());
         values.put(COL_LAST_START, history.getLastStart());
         values.put(COL_STARTED, history.isStartedInt());
+        values.put(COL_SENT, history.getSentInt());
         db.update(TABLE_HISTORY, values, COL_TASK_ID + " LIKE \"" + taskId + "\" AND " + COL_COMPANION_ID + " LIKE \"" + companionId + "\"", null);
     }
 
     public ArrayList<History> getAllHistoryByCompanionId(String companionId) {
         ArrayList<History> historyList = new ArrayList<>();
 
-        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED}, COL_COMPANION_ID + " LIKE \"" + companionId +"\"", null, null, null, null);
+        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED, COL_SENT}, COL_COMPANION_ID + " LIKE \"" + companionId +"\"", null, null, null, null);
         if (c.getCount() == 0)
             return null;
 
@@ -157,6 +162,7 @@ public class HistoryDB {
             history.setDate(c.getString(NUM_COL_DATE));
             history.setLastStart(c.getString(NUM_COL_LAST_START));
             history.setStartedInt(c.getInt(NUM_COL_STARTED));
+            history.setSentInt(c.getInt(NUM_COL_SENT));
             historyList.add(history);
             c.moveToNext();
         }
@@ -165,7 +171,7 @@ public class HistoryDB {
     }
 
     public void displayTable() {
-        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED}, null, null, null, null, null);
+        Cursor c = db.query(TABLE_HISTORY, new String[] {COL_ID, COL_COMPANION_ID, COL_TASK_ID, COL_DURATION, COL_DATE, COL_LAST_START, COL_STARTED, COL_SENT}, null, null, null, null, null);
         if (c.getCount() == 0)
             return;
 
@@ -177,7 +183,8 @@ public class HistoryDB {
                     +", task_id="+c.getString(NUM_COL_TASK_ID)+", duration="
                     +c.getString(NUM_COL_DURATION)+", date="+c.getString(NUM_COL_DATE)
                     +", started="+Integer.toString(c.getInt(NUM_COL_STARTED))
-                    +", last_start="+c.getString(NUM_COL_LAST_START));
+                    +", last_start="+c.getString(NUM_COL_LAST_START)
+                    +", sent="+Integer.toString(c.getInt(NUM_COL_SENT)));
 
             c.moveToNext();
         }

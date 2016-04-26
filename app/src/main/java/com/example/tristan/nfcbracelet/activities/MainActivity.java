@@ -48,8 +48,9 @@ public class MainActivity extends Activity {
 
     public static final String TAG = "MainActivity";
 
-    private TextView mTextView;
+    //private TextView mTextView;
     private ProgressBarCircularIndeterminate spinner;
+    private TextView mTextMessage;
 
     private HttpApi httpApi;
 
@@ -60,10 +61,12 @@ public class MainActivity extends Activity {
 
         httpApi = HttpApi.getInstance();
 
-        mTextView = (TextView) findViewById(R.id.textView_explanation);
+        //mTextView = (TextView) findViewById(R.id.textView_explanation);
         spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinner1);
+        mTextMessage = (TextView) findViewById(R.id.textMessage);
 
         //new loadDB().execute();
+        fillDatabase();
     }
 
     @Override
@@ -162,6 +165,15 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                spinner.setVisibility(View.GONE);
+                mTextMessage.setText("Approach a NFC bracelet to log in");
+            }
+        });
+
     }
 
     // FILL LOCAL DB WITH SERVER DATA
@@ -303,16 +315,18 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    spinner.setVisibility(View.GONE);
-                }
-            });
         }
 
         @Override
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    spinner.setVisibility(View.VISIBLE);
+
+                }
+            });
+        }
 
         @Override
         protected void onProgressUpdate(Void... values) {}

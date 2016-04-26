@@ -60,6 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String HISTORY_COL_DATE = "date";
     private static final String HISTORY_COL_LAST_START = "last_start";
     private static final String HISTORY_COL_STARTED = "started";
+    private static final String HISTORY_COL_SENT = "sent";
 
     private static final String CREATE_TABLE_COMPANIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_COMPANIONS + " ("
             + COMPANIONS_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -102,7 +103,8 @@ public class DBHelper extends SQLiteOpenHelper {
             + HISTORY_COL_DURATION + " TEXT NOT NULL, "
             + HISTORY_COL_DATE + " TEXT NOT NULL, "
             + HISTORY_COL_LAST_START + " TEXT NOT NULL, "
-            + HISTORY_COL_STARTED + " INTEGER);";
+            + HISTORY_COL_STARTED + " INTEGER, "
+            + HISTORY_COL_SENT + " INTEGER);";
 
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
