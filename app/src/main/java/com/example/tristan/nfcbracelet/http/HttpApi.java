@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient;
  * Created by Tristan on 29/03/2016.
  */
 public class HttpApi {
-    public final String API_ADDRESS =  "http://54.174.0.145:3000";
+    public final String API_ADDRESS =  "http://cop78.lespot-bouygues.com:3000";
     public final String COMPANIONS_ROUTE = "/companions";
     public final String TASKS_ROUTE = "/tasks";
     public final String TEAMS_ROUTE = "/teams";
