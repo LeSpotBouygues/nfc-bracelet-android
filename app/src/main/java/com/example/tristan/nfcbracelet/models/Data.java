@@ -25,7 +25,10 @@ public class Data {
         mTeam.setTeamId(teamCompanions.getTeamId());
         mTeam.setChiefId(teamCompanions.getChiefId());
         mTeam.setCompanions(teamCompanions.getCompanions());
-        mTeam.setTasks(teamTasks.getTasks());
+        if (teamTasks != null)
+            mTeam.setTasks(teamTasks.getTasks());
+        else
+            mTeam.setTasks(new ArrayList<Task>());
     }
 
     public Team getTeam() {

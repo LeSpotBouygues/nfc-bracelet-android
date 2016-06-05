@@ -104,7 +104,7 @@ public class CompanionTasksDB {
             return;
         c.moveToFirst();
         for (int i = 0; i < c.getCount(); i++) {
-            //Log.d(TAG, "id=" + c.getString(NUM_COL_ID) + ", companion_id=" + c.getString(NUM_COL_COMPANION_ID) +", task_id="+c.getString(NUM_COL_TASK_ID));
+            Log.d(TAG, "id=" + c.getString(NUM_COL_ID) + ", companion_id=" + c.getString(NUM_COL_COMPANION_ID) +", task_id="+c.getString(NUM_COL_TASK_ID));
             c.moveToNext();
         }
     }

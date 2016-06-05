@@ -74,6 +74,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_task, parent, false);
         }
+
         // Lookup view for data population
         final TextView taskName = (TextView) convertView.findViewById(R.id.taskName);
         final ImageView light = (ImageView) convertView.findViewById(R.id.taskLight);
@@ -85,7 +86,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         taskName.setText(task.getLongName());
         startTaskButton.setText("START");
 
-        if (history.isStarted()) {
+        if (history != null && history.isStarted()) {
             //Log.d(TAG, "HISTORY STARTED");
             startTaskButton.setText("STOP");
             light.setImageResource(R.mipmap.green_dot);
@@ -129,6 +130,9 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             }*/
         }
 
+        if (history == null) {
+            return convertView;
+        }
 
         startTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,7 +224,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        chronometer.setText(String.valueOf(sliderHours.getValue() + ":" + sliderMinutes.getValue()));
+                        //chronometer.setText(String.valueOf(sliderHours.getValue() + ":" + sliderMinutes.getValue()));
                         String duration = Integer.toString(sliderHours.getValue() * 60 + sliderMinutes.getValue());
                         Log.d(TAG, "duration = "+duration);
                         history.setDuration(duration);

@@ -24,6 +24,7 @@ public class Companion {
     private ArrayList<Task> tasksInProgress;
 
     public Companion() {
+        tasksInProgress = new ArrayList<>();
 
     }
 

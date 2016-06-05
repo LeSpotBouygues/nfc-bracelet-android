@@ -94,7 +94,6 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
         startTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : link to DB
                 if (startTaskButton.getText() == "START") {
                     startTaskButton.setText("STOP");
                     light.setImageResource(R.mipmap.green_dot);

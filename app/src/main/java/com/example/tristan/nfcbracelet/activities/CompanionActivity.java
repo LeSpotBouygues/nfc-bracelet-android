@@ -84,14 +84,18 @@ public class CompanionActivity extends AppCompatActivity {
         companionDB.open();
         companion = companionDB.getCompanionByUserId(companion_id);
         companionDB.close();
-        /*Log.d(TAG, companion.getFirstName());
+        Log.d(TAG, companion.getFirstName());
 
-        Log.d(TAG, "Number of team tasks : "+ teamTasks.size());
-        Log.d(TAG, "Number of tasks in progress : " + companion.getTasksInProgress().size());*/
+        //Log.d(TAG, "Number of team tasks : "+ teamTasks.size());
+        if (companion.getTasksInProgress() != null) {
+            //Log.d(TAG, "Number of tasks in progress : " + companion.getTasksInProgress().size());
+            new loadUI().execute();
+        }
+
 
         //companion.displayTasks();
 
-        new loadUI().execute();
+
 
         TextView companionName = (TextView) findViewById(R.id.companionName);
         companionName.setText(companion.getLastName() + " " + companion.getFirstName());
@@ -191,7 +195,8 @@ public class CompanionActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     listView = (ListView) findViewById(R.id.tasksList);
-                    listView.setAdapter(adapter);
+                    if (listView != null)
+                        listView.setAdapter(adapter);
                 }
             });
 

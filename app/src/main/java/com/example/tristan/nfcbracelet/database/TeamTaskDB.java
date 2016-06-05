@@ -57,8 +57,9 @@ public class TeamTaskDB {
 
     public void insertTeam(Team team){
 
-        //Log.d(TAG, "insert team " + team.getTeamId());
+        Log.d(TAG, "insert team " + team.getTeamId());
         int size = team.getNumberOfTasks();
+        Log.d(TAG, "size = " + Integer.toString(size));
         for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
             ContentValues values = new ContentValues();
@@ -72,8 +73,9 @@ public class TeamTaskDB {
 
     public void updateTeam(Team team){
 
-        //Log.d(TAG, "update team " + team.getTeamId());
+        Log.d(TAG, "update team " + team.getTeamId());
         int size = team.getNumberOfTasks();
+        Log.d(TAG, "size = " + Integer.toString(size));
         for (int i=0; i < size; i++) {
             //Création d'un ContentValues (fonctionne comme une HashMap)
             ContentValues values = new ContentValues();
@@ -105,7 +107,7 @@ public class TeamTaskDB {
             return;
         c.moveToFirst();
         for (int i=0; i < c.getCount(); i++) {
-            Log.d(TAG, "id="+c.getString(NUM_COL_ID) +", team_id="+c.getString(NUM_COL_TEAM_ID) +", chief_id="+c.getString(NUM_COL_CHIEF_ID) +", companion_id=" + c.getString(NUM_COL_TASK_ID));
+            Log.d(TAG, "id="+c.getString(NUM_COL_ID) +", team_id="+c.getString(NUM_COL_TEAM_ID) +", chief_id="+c.getString(NUM_COL_CHIEF_ID) +", task_id=" + c.getString(NUM_COL_TASK_ID));
             c.moveToNext();
         }
     }

@@ -72,12 +72,17 @@ public class HomeActivity extends AppCompatActivity
 
     private ArrayList<Companion> mTeamMembers;
     private ArrayList<Task> mTeamTasks;
+    private String mBraceletId;
 
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntent;
     private NdefMessage mNdefPushMessage;
 
     private AlertDialog mDialog;
+    private Toolbar mToolbar;
+    private NavigationView mNavigationView;
+    private TextView mNavChiefName;
+    private TextView mNavChiefPosition;
 
     private static final DateFormat TIME_FORMAT = SimpleDateFormat.getDateTimeInstance();
     private LinearLayout mTagContent;
@@ -87,16 +92,44 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Team");
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+        View headerView = mNavigationView.inflateHeaderView(R.layout.nav_header_home);
+        mNavChiefName = (TextView) headerView.findViewById(R.id.navChiefName);
+        mNavChiefPosition = (TextView) headerView.findViewById(R.id.navChiefPosition);
+        spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinnerHome);
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String lastSynchro = sharedPref.getString("synchro", "");
+        if (lastSynchro != null && lastSynchro.equals(android.text.format.DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString()))
+            Toast.makeText(this, "Warning : Last time data were sent was "+lastSynchro, Toast.LENGTH_LONG).show();
+
         // NFC
-        //mTagContent = (LinearLayout) findViewById(R.id.NFCList);
-        Log.d(TAG, "onCreate resolveIntent");
-        resolveIntent(getIntent());
-        Log.d(TAG, "onCreate resolveIntent end");
+        //mTagContent = (LinearLayout) findViewById(R.id.NFCList)
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.getString("braceletId") != null) {
+            mBraceletId = bundle.getString("braceletId");
+            new checkBraceletId().execute(mBraceletId);
+            Log.d(TAG, "getExtras braceletID");
+        }
+        else {
+            Log.d(TAG, "onCreate resolveIntent");
+            resolveIntent(getIntent());
+            //new loadData().execute();
+            Log.d(TAG, "onCreate resolveIntent end");
+        }
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
@@ -111,50 +144,16 @@ public class HomeActivity extends AppCompatActivity
                 "Message from NFC Reader :-)", Locale.ENGLISH, true) });
 
         //
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // debug database - to comment
-        //debugDB();
-
-        if (Session.getInstance().getUser() == null) {
-            goToMainActivity();
-            return;
-        }
-
-        Log.d(TAG, "onCreate before fragment");
-
-        new loadData().execute();
-
-        Log.d(TAG, "onCreate after fragment");
-
-        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
-        TextView navChiefName = (TextView) headerView.findViewById(R.id.navChiefName);
-        navChiefName.setText(Session.getInstance().getUser().getLastName() + " " + Session.getInstance().getUser().getFirstName());
-        TextView navChiefPosition = (TextView) headerView.findViewById(R.id.navChiefPosition);
-        navChiefPosition.setText(Session.getInstance().getUser().getPosition());
-        spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinnerHome);
-
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        String lastSynchro = sharedPref.getString("synchro", "");
-        if (lastSynchro != null && lastSynchro.equals(android.text.format.DateFormat.format("dd:MM:yyyy", new java.util.Date()).toString()))
-            Toast.makeText(this, "Warning : Last time data were sent was "+lastSynchro, Toast.LENGTH_LONG).show();
     }
 
     private void fillData() {
-        Log.d(TAG, "fillData");
-        if (Data.getInstance().getTeam() != null)
+        //Log.d(TAG, "fillData");
+        if (Data.getInstance().getTeam() != null && Data.getInstance().getTeam().getChiefId().equals(Session.getInstance().getUser().getUserId()))
             return;
         // get companions from team
         TeamCompanionDB teamCompanionDB = new TeamCompanionDB(this);
         teamCompanionDB.open();
+        Log.d(TAG, "fill data -> get user " + Session.getInstance().getUser().getFirstName() + Session.getInstance().getUser().getLastName());
         Team teamMembers = teamCompanionDB.getTeamByChiefId(Session.getInstance().getUser().getUserId());
         mTeamMembers = teamMembers.getCompanions();
         teamCompanionDB.close();
@@ -175,11 +174,13 @@ public class HomeActivity extends AppCompatActivity
         for (Companion companion : mTeamMembers) {
             Log.d(TAG, companion.getFirstName());
             ArrayList<Task> tasks = companion.getTasksInProgress();
-            for (Task task : tasks) {
-                Log.d(TAG, "      task : "+task.getTaskId());
-            }
             if (tasks == null) {
                 Log.d(TAG, "tasks in progress null");
+            }
+            else {
+                for (Task task : tasks) {
+                    Log.d(TAG, "      task : "+task.getTaskId());
+                }
             }
         }*/
 
@@ -187,13 +188,18 @@ public class HomeActivity extends AppCompatActivity
         TeamTaskDB teamTaskDB = new TeamTaskDB(this);
         teamTaskDB.open();
         Team teamTasks = teamTaskDB.getTeamByChiefId(Session.getInstance().getUser().getUserId());
-        mTeamTasks = teamTasks.getTasks();
+        if (teamTasks != null)
+            mTeamTasks = teamTasks.getTasks();
+        else
+            mTeamTasks = new ArrayList<>();
         teamTaskDB.close();
 
         // debug tasks list
         /*Log.d(TAG, "== TEAM TASKS ==");
-        for (Task task : mTeamTasks) {
-            Log.d(TAG, task.getLongName());
+        if (mTeamTasks != null) {
+            for (Task task : mTeamTasks) {
+                Log.d(TAG, task.getLongName());
+            }
         }*/
 
         // init data team
@@ -236,6 +242,11 @@ public class HomeActivity extends AppCompatActivity
         historyDB.close();*/
     }
 
+    private void updateUI() {
+        mNavChiefName.setText(Session.getInstance().getUser().getLastName() + " " + Session.getInstance().getUser().getFirstName());
+        mNavChiefPosition.setText(Session.getInstance().getUser().getPosition());
+    }
+
     private void debugDB() {
 
         // debug companions
@@ -261,17 +272,22 @@ public class HomeActivity extends AppCompatActivity
             for (Companion companion : team.getCompanions()) {
                 Log.d("DB RESULTS", "    " + companion.getFirstName());
             }
+            for (Task task : team.getTasks()) {
+                Log.d("DB RESULTS", "    task " + task.getTaskId());
+            }
+
         }
 
         // debug tasks
-        Log.d("DB RESULTS", "=== TASKS ===");
+        /*Log.d("DB RESULTS", "=== TASKS ===");
         TaskDB taskDB = new TaskDB(this);
         taskDB.open();
         ArrayList<Task> taskResults = taskDB.getAllTasks();
         taskDB.close();
         for (Task task : taskResults) {
             Log.d("DB RESULTS", task.getLongName());
-        }
+        }*/
+        Log.d("DB RESULTS", "=== TEAM TASKS ===");
         TeamTaskDB teamTaskDB = new TeamTaskDB(this);
         teamTaskDB.open();
         teamTaskDB.displayTable();
@@ -361,6 +377,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        Log.d(TAG, "onResume");
         /**
          * It's important, that the activity is in the foreground (resumed). Otherwise
          * an IllegalStateException is thrown.
@@ -372,10 +389,15 @@ public class HomeActivity extends AppCompatActivity
             mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
             mNfcAdapter.enableForegroundNdefPush(this, mNdefPushMessage);
         }
+
+        if (Session.getInstance().getUser() != null) {
+            new loadData().execute();
+        }
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
         /**
          * Call this before onPause, otherwise an IllegalArgumentException is thrown as well.
          */
@@ -536,6 +558,7 @@ public class HomeActivity extends AppCompatActivity
         protected String doInBackground(String... params) {
             Log.d(TAG, "checkBracelet");
             String braceletId = params[0];
+            Log.d(TAG, "bracelet id = "+braceletId);
             CompanionDB companionDB = new CompanionDB(getApplicationContext());
             companionDB.open();
             final Companion user = companionDB.getCompanionByBraceletId(braceletId);
@@ -548,13 +571,15 @@ public class HomeActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Companion not found", Toast.LENGTH_LONG).show();
                     }
                 });
-                goToMainActivity();
+                if (Session.getInstance().getUser() == null)
+                    goToMainActivity();
                 return "";
             }
 
             if (user.isChief()) {
                 Session.getInstance().setUser(user);
-                return "";
+                Log.d(TAG, "Companion " + user.getFirstName() + user.getLastName());
+                return "chief";
             }
             else if (Session.getInstance().getUser() == null) {
                 runOnUiThread(new Runnable() {
@@ -563,18 +588,22 @@ public class HomeActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Companion is not a chief", Toast.LENGTH_LONG).show();
                     }
                 });
-                goToMainActivity();
+                if (Session.getInstance().getUser() == null)
+                    goToMainActivity();
                 return "";
             }
             ArrayList<Companion> companions = Data.getInstance().getTeam().getCompanions();
-            for (Companion companion : companions) {
+            for (final Companion companion : companions) {
                 if (companion.getBraceletId().equals(user.getBraceletId())) {
                     if (!companion.isPresent()) {
                         Log.d(TAG, "présence validée pour " + user.getFirstName());
                         Data.getInstance().getTeam().getCompanionByUserId(companion.getUserId()).setPresence(true);
+                        /*final Companion companionToUpdate = companion;
+                        companionToUpdate.setPresence(true);*/
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                //new updateCompanion().execute(companionToUpdate.getUserId());
                                 Toast.makeText(getApplicationContext(), user.getFirstName() + "'s presence validated", Toast.LENGTH_LONG).show();
                             }
                         });
@@ -588,21 +617,47 @@ public class HomeActivity extends AppCompatActivity
                             }
                         });
                     }
-                    return "";
+                    return "presence";
                 }
             }
-            runOnUiThread(new Runnable() {
+            /*runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), user.getFirstName() + " added to the team", Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
             return "Executed";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(TAG, "checkBracelet end");
+            Log.d(TAG, "checkBracelet result : "+result);
+            if (!result.equals("")) {
+                new loadData().execute();
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+    }
+
+    private class updateCompanion extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            CompanionDB companionDB = new CompanionDB(getApplicationContext());
+            companionDB.open();
+            Companion companion = companionDB.getCompanionByUserId(params[0]);
+            companionDB.updateCompanion(companion.getUserId(), companion);
+            companionDB.close();
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
         }
 
         @Override
@@ -616,6 +671,12 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected String doInBackground(String... params) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateUI();
+                }
+            });
             fillData();
             return "Executed";
         }
@@ -625,6 +686,7 @@ public class HomeActivity extends AppCompatActivity
             Log.d(TAG, "checkBracelet end");
             new Handler().post(new Runnable() {
                 public void run() {
+                    spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinnerHome);
                     spinner.setVisibility(View.GONE);
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction()

@@ -1,7 +1,9 @@
 package com.example.tristan.nfcbracelet.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
@@ -13,6 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,19 +56,50 @@ public class MainActivity extends Activity {
     //private TextView mTextView;
     private ProgressBarCircularIndeterminate spinner;
     private TextView mTextMessage;
+    private EditText mBraceletIdText;
+    private FrameLayout mHiddenLayout;
+    private Dialog mDialog;
 
     private HttpApi httpApi;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
 
         httpApi = HttpApi.getInstance();
+        mContext = this;
 
         //mTextView = (TextView) findViewById(R.id.textView_explanation);
         spinner = (ProgressBarCircularIndeterminate) findViewById(R.id.spinner1);
         mTextMessage = (TextView) findViewById(R.id.textMessage);
+        mHiddenLayout = (FrameLayout) findViewById(R.id.hiddenLayout);
+        mDialog = new Dialog(this);
+        mDialog.setContentView(R.layout.dialog_debug_bracelet);
+        mBraceletIdText = (EditText) mDialog.findViewById(R.id.braceletIdText);
+        Button okButton = (Button) mDialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String braceletId = mBraceletIdText.getText().toString();
+                Intent intent = new Intent(mContext, HomeActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("braceletId", braceletId);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        Button cancelButton = (Button) mDialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialog.dismiss();
+            }
+        });
+
 
         //new loadDB().execute();
         fillDatabase();
@@ -72,11 +108,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause");
     }
 
     private void goToProfile() {
@@ -171,6 +209,12 @@ public class MainActivity extends Activity {
             public void run() {
                 spinner.setVisibility(View.GONE);
                 mTextMessage.setText("Approach a NFC bracelet to log in");
+                mHiddenLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDialog.show();
+                    }
+                });
             }
         });
 
