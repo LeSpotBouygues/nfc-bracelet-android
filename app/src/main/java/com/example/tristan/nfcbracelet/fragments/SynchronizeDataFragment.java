@@ -147,24 +147,31 @@ public class SynchronizeDataFragment extends Fragment {
                             switch (day) {
                                 case Calendar.SUNDAY:
                                     dayOfWeek = "Sunday";
+                                    break;
 
                                 case Calendar.MONDAY:
                                     dayOfWeek = "Monday";
+                                    break;
 
                                 case Calendar.TUESDAY:
                                     dayOfWeek = "Tuesday";
+                                    break;
 
                                 case Calendar.WEDNESDAY:
                                     dayOfWeek = "Wednesday";
+                                    break;
 
                                 case Calendar.THURSDAY:
                                     dayOfWeek = "Thursday";
+                                    break;
 
                                 case Calendar.FRIDAY:
                                     dayOfWeek = "Friday";
+                                    break;
 
                                 case Calendar.SATURDAY:
                                     dayOfWeek = "Saturday";
+                                    break;
                             }
                             String sendDataString = "Last synchronization : "
                                     + dayOfWeek + " "

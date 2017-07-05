@@ -139,6 +139,14 @@ public class Companion {
 
     }
 
+    public boolean isAssignedToTask(Task taskToCheck) {
+        for (Task task : tasksInProgress) {
+            if (task.getTaskId().equals(taskToCheck.getTaskId()))
+                return true;
+        }
+        return false;
+    }
+
     public void displayTasks() {
         Log.d(TAG, firstName +", tasks : ");
         for (Task task : tasksInProgress) {

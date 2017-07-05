@@ -85,11 +85,11 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         // Populate the data into the template view using the data object
         taskName.setText(task.getLongName());
         startTaskButton.setText("START");
+        light.setImageResource(R.mipmap.reddot);
+        chronometer.stop();
 
-        if (history != null && history.isStarted()) {
-            //Log.d(TAG, "HISTORY STARTED");
-            startTaskButton.setText("STOP");
-            light.setImageResource(R.mipmap.green_dot);
+        if (history != null) {
+            //Log.d(TAG, task.getLongName() + " : HISTORY NOT NULL");
 
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -100,14 +100,23 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 long nowLong = sdf.parse(now).getTime();
                 //Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
                 //Log.d(TAG, "elapsedRealtime = " + String.valueOf(SystemClock.elapsedRealtime()));
-                long chronoValue = SystemClock.elapsedRealtime() - (nowLong - lastStartLong + Integer.parseInt(history.getDuration()) * 60000);
+                long chronoValue;
+                if (history.isStarted()) {
+                    chronoValue = SystemClock.elapsedRealtime() - (nowLong - lastStartLong + Integer.parseInt(history.getDuration()) * 60000);
+                } else {
+                    chronoValue = SystemClock.elapsedRealtime() - (Integer.parseInt(history.getDuration()) * 60000);
+                }
                 chronometer.setBase(chronoValue);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-
-            chronometer.start();
+            if (history.isStarted()) {
+                //Log.d(TAG, task.getLongName() + " : start task");
+                startTaskButton.setText("STOP");
+                light.setImageResource(R.mipmap.green_dot);
+                chronometer.start();
+            }
 
         } else {
             //Log.d(TAG, "HISTORY STOPPED");
@@ -224,7 +233,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //chronometer.setText(String.valueOf(sliderHours.getValue() + ":" + sliderMinutes.getValue()));
+                        chronometer.setText(String.valueOf((sliderHours.getValue() > 9 ? sliderHours.getValue() : "0"+sliderHours.getValue()) + ":" + (sliderMinutes.getValue() > 9 ? sliderMinutes.getValue() : "0"+sliderMinutes.getValue()) + ":00"));
                         String duration = Integer.toString(sliderHours.getValue() * 60 + sliderMinutes.getValue());
                         Log.d(TAG, "duration = "+duration);
                         history.setDuration(duration);

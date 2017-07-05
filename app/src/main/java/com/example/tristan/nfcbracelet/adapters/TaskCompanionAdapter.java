@@ -69,7 +69,7 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
         startTaskButton.setText("START");
 
         if (history.isStarted()) {
-            Log.d(TAG, "HISTORY STARTED");
+            //Log.d(TAG, "HISTORY STARTED");
             startTaskButton.setText("STOP");
             light.setImageResource(R.mipmap.green_dot);
         }
@@ -79,22 +79,30 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
         companionName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : check presence
-                //if (checkBox.isChecked()) {
+                if (companion.isPresent()) {
                     Intent intent = new Intent(getContext(), CompanionActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("companionId", companion.getUserId());
                     intent.putExtras(bundle);
                     getContext().startActivity(intent);
-                /*} else {
-                    Toast.makeText(getContext(), companionName.getText() + "'s presence hasn't been checked", Toast.LENGTH_LONG).show();
-                }*/
-            }
+                } else {
+                        Toast.makeText(getContext(), companionName.getText() + "'s presence hasn't been checked", Toast.LENGTH_LONG).show();
+                    }
+                }
         });
         startTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*if (!companion.isPresent()) {
+                    Toast.makeText(getContext(), companionName.getText() + "'s presence hasn't been checked", Toast.LENGTH_LONG).show();
+                    return;
+                }*/
+
                 if (startTaskButton.getText() == "START") {
+                    if (!companion.isPresent()) {
+                        Toast.makeText(getContext(), companionName.getText() + "'s presence hasn't been checked", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     startTaskButton.setText("STOP");
                     light.setImageResource(R.mipmap.green_dot);
                     history.setStarted(true);
@@ -111,15 +119,15 @@ public class TaskCompanionAdapter extends ArrayAdapter<Companion> {
                     try {
                         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                         java.util.Date lastStart = sdf.parse(history.getLastStart());
-                        Log.d(TAG, "lastStart = "+history.getLastStart());
+                        //Log.d(TAG, "lastStart = "+history.getLastStart());
                         long lastStartLong = lastStart.getTime();
-                        Log.d(TAG, "lastStartLong = " + String.valueOf(lastStartLong));
+                        //Log.d(TAG, "lastStartLong = " + String.valueOf(lastStartLong));
                         String now = DateFormat.format("HH:mm:ss", new java.util.Date()).toString();
                         long nowLong = sdf.parse(now).getTime();
-                        Log.d(TAG, "now = " + sdf.parse(now));
-                        Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
+                        //Log.d(TAG, "now = " + sdf.parse(now));
+                        //Log.d(TAG, "nowLong = " + String.valueOf(nowLong));
                         String duration = Long.toString((nowLong - lastStartLong)/60000 + Integer.parseInt(history.getDuration()));
-                        Log.d(TAG, "duration = "+duration);
+                        //Log.d(TAG, "duration = "+duration);
                         history.setDuration(duration);
                     } catch (ParseException e) {
                         e.printStackTrace();

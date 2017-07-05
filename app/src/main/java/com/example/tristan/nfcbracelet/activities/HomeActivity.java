@@ -500,7 +500,12 @@ public class HomeActivity extends AppCompatActivity
                 sb.append(" ");
             }*/
         }
-        return sb.toString();
+        // inversion
+        String str = sb.toString();
+        Log.d(TAG, str);
+        String nfcId = str.substring(6, 8) + str.substring(4, 6) + str.substring(2, 4) + str.substring(0, 2);
+        Log.d(TAG, nfcId);
+        return nfcId;
     }
 
     void buildTagViews(NdefMessage[] msgs) {
@@ -563,7 +568,7 @@ public class HomeActivity extends AppCompatActivity
             companionDB.open();
             final Companion user = companionDB.getCompanionByBraceletId(braceletId);
             companionDB.close();
-            if (user == null) {
+            /*if (user == null) {
                 Log.d(TAG, "Companion not found");
                 runOnUiThread(new Runnable() {
                     @Override
@@ -574,7 +579,7 @@ public class HomeActivity extends AppCompatActivity
                 if (Session.getInstance().getUser() == null)
                     goToMainActivity();
                 return "";
-            }
+            }*/
 
             if (user.isChief()) {
                 Session.getInstance().setUser(user);

@@ -123,9 +123,11 @@ public class CompanionActivity extends AppCompatActivity {
                 companionTasksDB.displayTable();
                 companionTasksDB.close();*/
 
-                adapter.clear();
+                if (adapter.getCount() != 0)
+                    adapter.clear();
                 companionTasksDB.open();
                 companionTasksDB.deleteAllTasksForCompanion(companion);
+                ArrayList<Task> tasksToAssignInData = new ArrayList<Task>();
                 for (int i=0; i < tasksCheckList.getCount(); i++) {
                     Task taskToAssign = taskCheckAdapter.getItem(i);
                     //Log.d(TAG, "Task : "+taskToAssign.getLongName());
@@ -139,6 +141,7 @@ public class CompanionActivity extends AppCompatActivity {
                             else
                                 companionTasksDB.updateTaskForCompanion(companion, taskToAssign);
                             adapter.add(taskToAssign);
+                            tasksToAssignInData.add(taskToAssign);
                         }
                     }
                     else {
@@ -148,7 +151,9 @@ public class CompanionActivity extends AppCompatActivity {
                 companionTasksDB.close();
 
                 adapter.notifyDataSetChanged();
+                mData.getTeam().getCompanionByUserId(companion.getUserId()).setTasksInProgress(tasksToAssignInData);
 
+                new loadUI().execute();
                 /*companionTasksDB.open();
                 companionTasksDB.displayTable();
                 companionTasksDB.close();*/

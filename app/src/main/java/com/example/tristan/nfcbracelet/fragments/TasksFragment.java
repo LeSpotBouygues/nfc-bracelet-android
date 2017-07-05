@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import java.util.List;
  */
 public class TasksFragment extends Fragment {
 
+    private static final String TAG = "TasksFragment";
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Data mData;
@@ -42,6 +45,7 @@ public class TasksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView");
         mData = Data.getInstance();
 
         // Inflate the layout for this fragment
@@ -59,9 +63,11 @@ public class TasksFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        Log.d(TAG, "setupViewPager");
         int numberOfTasks = mData.getTeam().getNumberOfTasks();
         ArrayList<Task> tasks = mData.getTeam().getTasks();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
@@ -102,5 +108,11 @@ public class TasksFragment extends Fragment {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
     }
 }
